@@ -46,7 +46,7 @@ export default class SettingsPage extends Page {
      * @returns {Promise<void>}
      */
     async goto(options = {}) {
-        await this.backOffice.gotoSeQuraSettings({ page: this.pageHash });
+        await this.backOffice.gotoSeQuraSettings({ page: this.pageHash, ...options });
     }
 
     /**
