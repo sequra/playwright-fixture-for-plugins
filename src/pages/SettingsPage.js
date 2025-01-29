@@ -1,4 +1,4 @@
-import Page from './Page';
+import Page from './Page.js';
 
 /**
  * Interface for interacting with a seQura settings page

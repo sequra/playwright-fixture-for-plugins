@@ -1,4 +1,4 @@
-import Fixture from '../base/Fixture';
+import Fixture from '../base/Fixture.js';
 
 /**
  * Allow interaction with the seQura helper module backend

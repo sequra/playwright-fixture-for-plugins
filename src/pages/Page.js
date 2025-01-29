@@ -1,4 +1,4 @@
-import Fixture from '../base/Fixture';
+import Fixture from '../base/Fixture.js';
 
 /**
  * Interface for interacting with an specific page

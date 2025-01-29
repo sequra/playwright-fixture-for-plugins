@@ -1,4 +1,4 @@
-import Fixture from "./Fixture";
+import Fixture from "./Fixture.js";
 
 /**
  * Interface for BackOffice fixtures
