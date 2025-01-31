@@ -69,6 +69,7 @@ export default class SettingsPage extends Page {
       * @returns {Promise<void>}
       */
     async save(options = { expectLoadingShowAndHide: true, skipIfDisabled: false }) {
+        const { expectLoadingShowAndHide, skipIfDisabled } = options;
         const saveBtnLocator = this.locators.saveButton();
         try {
             await saveBtnLocator.waitFor({ timeout: 1500 });

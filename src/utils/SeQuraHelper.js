@@ -34,6 +34,7 @@ export default class SeQuraHelper extends Fixture {
      * @returns {string} The URL to use
      */
     getWebhookUrl(options = { webhook, args: [] }) {
+        const { webhook, args } = options;
         return `${this.baseURL}/?sq-webhook=${webhook}${this.getWebhookUrlArgs(args)}`;
     }
 
@@ -56,6 +57,7 @@ export default class SeQuraHelper extends Fixture {
     * @returns {Promise<void>}
     */
     async executeWebhook(options = { webhook, args: [] }) {
+        const { webhook, args } = options;
         if (!this.webhooks[webhook]) {
             throw new Error(`Webhook "${webhook}" not found`);
         }
