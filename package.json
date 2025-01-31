@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/sequra/playwright-fixture-for-plugins/issues"
   },
-  "homepage": "https://github.com/sequra/playwright-fixture-for-plugins#readme"
+  "homepage": "https://github.com/sequra/playwright-fixture-for-plugins#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1"
+  }
 }
