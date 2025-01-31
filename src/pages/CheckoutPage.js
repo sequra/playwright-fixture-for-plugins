@@ -38,6 +38,16 @@ export default class CheckoutPage extends Page {
     /**
      * Fill the checkout page's form
      * @param {Object} options Contains the data to fill the form
+     * @param {string} options.email Email
+     * @param {string} options.firstName First name
+     * @param {string} options.lastName Last name
+     * @param {string} options.address1 Address first line
+     * @param {string} options.country Typically a 2-letter ISO country code
+     * @param {string} options.state Name of the state
+     * @param {string} options.city Name of the city
+     * @param {string} options.postcode Postcode
+     * @param {string} options.phone Phone number
+     * @param {string} options.shippingMethod Shipping method
      * @returns {Promise<void>}
      */
     async fillForm(options) {

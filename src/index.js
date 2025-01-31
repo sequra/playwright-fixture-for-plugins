@@ -1,4 +1,5 @@
 export { default as Fixture } from './base/Fixture.js';
+export { default as DataProvider } from './utils/DataProvider.js';
 export { default as BackOffice } from './base/BackOffice.js';
 export { default as SeQuraHelper } from './utils/SeQuraHelper.js';
 export { default as Page } from './pages/Page.js';
