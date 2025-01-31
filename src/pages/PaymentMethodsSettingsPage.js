@@ -49,7 +49,7 @@ export default class PaymentMethodsSettingsPage extends SettingsPage {
             await this.expectLoadingShowAndHide();
 
             for (const paymentMethod of paymentMethods) {
-                await this.expect(this.locators.paymentMethodTitle(pm), `The payment method "${paymentMethod}" is visible`).toBeVisible();
+                await this.expect(this.locators.paymentMethodTitle(paymentMethod), `The payment method "${paymentMethod}" is visible`).toBeVisible();
             }
 
         }
