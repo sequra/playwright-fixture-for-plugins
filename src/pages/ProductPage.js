@@ -12,8 +12,8 @@ export default class ProductPage extends Page {
     */
     initLocators() {
         return {
-            qtyInput: this.qtyLocator,
-            addToCartButton: this.addToCartLocator,
+            qtyInput: opt => this.qtyLocator(opt),
+            addToCartButton: opt => this.addToCartLocator(opt),
         };
     }
 
@@ -74,7 +74,8 @@ export default class ProductPage extends Page {
      * @param {number} options.quantity The quantity to add to the cart
      */
     async addToCart(options) {
-        const { slug, quantity } = options;
+        await this.goto(options);
+        const { quantity } = options;
         const { qtyInput, addToCartButton } = this.locators;
         await qtyInput(options).fill(`${quantity || 1}`);
         await addToCartButton(options).click();
