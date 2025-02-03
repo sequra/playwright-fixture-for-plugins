@@ -12,6 +12,7 @@ export default class Fixture {
         this.page = page;
         this.baseURL = baseURL;
         this.expect = expect;
+        this.selectors = this.initSelectors();
         this.locators = this.initLocators();
     }
 
@@ -21,6 +22,15 @@ export default class Fixture {
      * @returns {Object}
      */
     initLocators() {
+        return {};
+    }
+
+    /**
+     * Hold CSS selectors used by several locators
+     * 
+     * @returns {Object}
+     */
+    initSelectors() {
         return {};
     }
 }
