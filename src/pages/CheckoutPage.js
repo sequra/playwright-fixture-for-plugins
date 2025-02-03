@@ -141,6 +141,7 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Fill checkout form for i1 product
      * 
      * @param {Object} options Contains the data to fill the form
      * @param {string} options.dateOfBirth Date of birth
@@ -167,6 +168,14 @@ export default class CheckoutPage extends Page {
     }
 
     async fillSp1CheckoutForm(options) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Define the expected behavior after placing an order
+     * @param {Object} options 
+     */
+    async waitForOrderSuccess(options) {
         throw new Error('Not implemented');
     }
 }
