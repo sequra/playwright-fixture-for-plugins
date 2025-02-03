@@ -25,7 +25,8 @@ export default class CheckoutPage extends Page {
         return {
             paymentMethodTitle: opt => this.paymentMethodTitleLocator(opt),
             paymentMethodInput: opt => this.paymentMethodInputLocator(opt),
-            sqIframeI1: () => this.page.frameLocator(this.selector.sqIframeI1),
+            sqIframeI1: () => this.page.frameLocator(this.selectors.sqIframeI1),
+            sqIframeI1Locator: () => this.page.locator(this.selectors.sqIframeI1),
             sqDateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             sqNin: iframe => iframe.locator('[name="nin"]'),
             sqAcceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
@@ -151,8 +152,8 @@ export default class CheckoutPage extends Page {
      */
     async fillI1CheckoutForm(options) {
         const { dateOfBirth, dni } = options;
-        await this.page.locator(this.selectors.sqIframeI1).waitFor({ state: 'attached', timeout: 10000 });
-        const iframe = this.page.frameLocator(this.selector.sqIframeI1);
+        await this.locators.sqIframeI1Locator().waitFor({ state: 'attached', timeout: 10000 });
+        const iframe = this.locators.sqIframeI1();
         // First name, last name, and mobile phone came already filled.
         await this.locators.sqDateOfBirth(iframe).click();
         await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
