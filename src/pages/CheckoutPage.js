@@ -12,6 +12,8 @@ export default class CheckoutPage extends Page {
     */
     initLocators() {
         return {
+            paymentMethodTitle: opt => this.paymentMethodTitleLocator(opt),
+            paymentMethodInput: opt => this.paymentMethodInputLocator(opt),
         };
     }
 
@@ -36,6 +38,27 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Provide the locator to input the payment method
+     * @param {Object} options
+     * @param {string} options.product seQura product (i1, pp3, etc)
+     * @param {boolean} options.checked Whether the payment method should be checked
+     * @returns {import("@playwright/test").Locator}
+     */
+    paymentMethodInputLocator(options) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Provide the locator to input the payment method
+     * @param {Object} options
+     * @param {string} options.title Payment method title as it appears in the UI
+     * @returns {import("@playwright/test").Locator}
+     */
+    paymentMethodTitleLocator(options) {
+        throw new Error('Not implemented');
+    }
+
+    /**
      * Fill the checkout page's form
      * @param {Object} options Contains the data to fill the form
      * @param {string} options.email Email
@@ -52,5 +75,18 @@ export default class CheckoutPage extends Page {
      */
     async fillForm(options) {
         throw new Error('Not implemented');
+    }
+
+    /**
+     * Expect payment method to be visible
+     * @param {Object} options 
+     * @param {string} options.title Payment method title as it appears in the UI
+     * @param {string} options.product seQura product (i1, pp3, etc)
+     * @param {boolean} options.checked Whether the payment method should be checked
+     */
+    async expectPaymentMethodToBeVisible(options) {
+        const { title, product } = options;
+        await this.expect(this.locators.paymentMethodInput(options), `"${product}" payment method input should be visible`).toBeVisible({ timeout: 10000 });
+        await this.expect(this.locators.paymentMethodTitle(options), `"${title}" payment method should be visible`).toBeVisible({ timeout: 10000 });
     }
 }

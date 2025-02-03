@@ -40,6 +40,7 @@ export default class DataProvider extends Fixture {
      * - approve: For placing an approved 🍊 order 
      * - cancel: For placing a cancelled 🍊 order
      * - nonSpecial: For placing a normal order
+     * @returns {Object}
      */
     shopper(alias = 'nonSpecial') {
         const shopper = {
@@ -79,6 +80,25 @@ export default class DataProvider extends Fixture {
                 return shopper;
             default:
                 throw new Error(`Invalid merchant reference "${alias}"`);
+        }
+    }
+
+    /**
+     * Checkout payment methods
+     * 
+     * @param {string} merchantRef 
+     * @returns {Array<Object>} 
+     */
+    checkoutPaymentMethods(merchantRef = 'dummy_automated_tests') {
+        switch (merchantRef) {
+            case 'dummy_automated_tests':
+                return [
+                    { title: 'Recibe tu compra antes de pagar', product: 'i1', checked: false },
+                    { title: 'Divide en 3 partes de ', product: 'sp1', checked: false },
+                    { title: 'Paga Fraccionado desde ', product: 'pp3', checked: false }
+                ];
+            default:
+                throw new Error(`Invalid merchant reference "${merchantRef}"`);
         }
     }
 
