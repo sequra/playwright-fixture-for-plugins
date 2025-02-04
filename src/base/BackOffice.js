@@ -34,4 +34,13 @@ export default class BackOffice extends Fixture {
     async gotoSeQuraSettings(options = { page: '' }) {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Navigate to Order listing page
+     * 
+     * @param {Object} options
+     */
+    async gotoOrderListing(options) {
+        throw new Error('Not implemented');
+    }
 }

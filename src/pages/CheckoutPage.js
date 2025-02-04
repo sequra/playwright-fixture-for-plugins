@@ -1,3 +1,4 @@
+import BackOffice from "../base/BackOffice.js";
 import Page from "./Page.js";
 
 /**
@@ -189,12 +190,61 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Read the order number from the success page
+     * 
+     * @returns {Promise<string>}
+     */
+    async getOrderNumber() {
+        throw new Error('Not implemented');
+    }
+
+     /**
+     * Expects the order to have the expected status
+     * @param {Object} options 
+     * @param {string} options.orderNumber The order number
+     * @param {string} options.status The expected status
+     * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
+     * @returns {Promise<void>}
+     */
+     async expectOrderHasStatus(options) {
+        throw new Error('Not implemented');
+     }
+
+     /**
+     * Wait until the order to have the expected status or the timeout
+     * @param {Object} options 
+     * @param {string} options.orderNumber The order number
+     * @param {string} options.status The expected status
+     * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
+     */
+     async waitForOrderStatus(options) {
+        const { status, waitFor } = options;
+        console.log(`Waiting for order has status "${status}" for ${waitFor} seconds...`);
+        for (let i = 0; i < waitFor; i++) {
+            try {
+                await this.expectOrderHasStatus(options);
+                console.log(`Order status changed to "${status}" after ${i} seconds`);
+                break;
+            } catch (err) {
+                if (i >= waitFor) {
+                    console.log(`Timeout: after ${i} seconds the order status didn't change to "${status}" `);
+                    throw err
+                }
+                await this.page.waitForTimeout(1000);
+                await this.page.reload();
+            }
+        }
+     }
+
+    /**
      * Check if the order changes to the expected state
+     * @param {BackOffice} backOffice
      * @param {Object} options
      * @param {string} options.toStatus The expected status
      * @param {string} options.fromStatus The initial status. Optional
+     * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
      */
-    async expectOrderChangeTo(options) {
+    async expectOrderChangeTo(backOffice, options) {
         throw new Error('Not implemented');
     }
 }
