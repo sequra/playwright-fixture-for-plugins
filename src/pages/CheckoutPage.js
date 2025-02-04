@@ -179,4 +179,22 @@ export default class CheckoutPage extends Page {
     async waitForOrderSuccess(options) {
         throw new Error('Not implemented');
     }
+
+    /**
+     * Define the expected behavior after placing an order that is on hold
+     * @param {Object} options 
+     */
+    async waitForOrderOnHold(options) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Check if the order changes to the expected state
+     * @param {Object} options
+     * @param {string} options.toStatus The expected status
+     * @param {string} options.fromStatus The initial status. Optional
+     */
+    async expectOrderChangeTo(options) {
+        throw new Error('Not implemented');
+    }
 }
