@@ -139,7 +139,7 @@ export default class CheckoutPage extends Page {
         await this.locators.sqOtp4(iframe).pressSequentially(otp[3]);
         await this.locators.sqOtp5(iframe).pressSequentially(otp[4]);
 
-       await this.locators.sqIframeBtn(iframe).click();
+        await this.locators.sqIframeBtn(iframe).click();
     }
 
     /**
@@ -198,26 +198,35 @@ export default class CheckoutPage extends Page {
         throw new Error('Not implemented');
     }
 
-     /**
-     * Expects the order to have the expected status
-     * @param {Object} options 
-     * @param {string} options.orderNumber The order number
-     * @param {string} options.status The expected status
-     * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
-     * @returns {Promise<void>}
-     */
-     async expectOrderHasStatus(options) {
+    /**
+    * Expects the order to have the expected status
+    * @param {Object} options 
+    * @param {string} options.orderNumber The order number
+    * @param {string} options.status The expected status
+    * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
+    * @returns {Promise<void>}
+    */
+    async expectOrderHasStatus(options) {
         throw new Error('Not implemented');
-     }
+    }
 
-     /**
-     * Wait until the order to have the expected status or the timeout
+    /**
+     * The timeout to wait before retrying to check the order status
      * @param {Object} options 
-     * @param {string} options.orderNumber The order number
-     * @param {string} options.status The expected status
-     * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
+     * @returns {int}
      */
-     async waitForOrderStatus(options) {
+    getOrderStatusTimeoutInMs(options) {
+        return 1000;
+    }
+
+    /**
+    * Wait until the order to have the expected status or the timeout
+    * @param {Object} options 
+    * @param {string} options.orderNumber The order number
+    * @param {string} options.status The expected status
+    * @param {int} options.waitFor The maximum amount of seconds to wait for the order status to change
+    */
+    async waitForOrderStatus(options) {
         const { status, waitFor } = options;
         console.log(`Waiting for order has status "${status}" for ${waitFor} seconds...`);
         for (let i = 0; i < waitFor; i++) {
@@ -230,11 +239,11 @@ export default class CheckoutPage extends Page {
                     console.log(`Timeout: after ${i} seconds the order status didn't change to "${status}" `);
                     throw err
                 }
-                await this.page.waitForTimeout(1000);
+                await this.page.waitForTimeout(this.getOrderStatusTimeoutInMs(options));
                 await this.page.reload();
             }
         }
-     }
+    }
 
     /**
      * Check if the order changes to the expected state
