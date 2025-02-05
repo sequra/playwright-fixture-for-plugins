@@ -7,3 +7,4 @@ export { default as SettingsPage } from './pages/SettingsPage.js';
 export { default as PaymentMethodsSettingsPage } from './pages/PaymentMethodsSettingsPage.js';
 export { default as ProductPage } from './pages/ProductPage.js';
 export { default as CheckoutPage } from './pages/CheckoutPage.js';
+export { default as OnboardingSettingsPage } from './pages/OnboardingSettingsPage.js';

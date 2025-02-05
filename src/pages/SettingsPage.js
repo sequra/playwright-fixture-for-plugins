@@ -29,6 +29,7 @@ export default class SettingsPage extends Page {
     initLocators() {
         return {
             pageLoader: isHidden => this.page.locator(`.sq-page-loader${isHidden ? '.sqs--hidden' : ':not(.sqs--hidden)'}`),
+            primaryButton: () => this.page.locator('.sq-button.sqt--primary'),
             saveButton: () => this.page.locator('.sq-button.sqp-save:not([disabled])'),
             cancelButton: () => this.page.locator('.sq-button.sqp-cancel:not([disabled])'),
             inputError: () => this.page.locator('.sqp-input-error'),
@@ -36,6 +37,7 @@ export default class SettingsPage extends Page {
             dropdownButton: () => this.page.locator('.sqp-dropdown-button'),
             dropdownListItem: text => this.page.locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
             dropdownSelectedListItem: text => this.page.locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
+            multiSelect: () => this.page.locator('.sq-multi-item-selector'),
         };
     }
 
