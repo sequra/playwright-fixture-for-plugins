@@ -16,7 +16,7 @@ export default class DataProvider extends Fixture {
 
     /**
      * Data for PaymentMethodsSettingsPage
-     * @param {string} merchantRef 
+     * @param {string} merchantRef Options: dummy_automated_tests
      * @returns {Array<Object>}
      */
     countriesPaymentMethods(merchantRef = 'dummy_automated_tests') {
@@ -30,6 +30,25 @@ export default class DataProvider extends Fixture {
                 ];
             default:
                 throw new Error(`Invalid merchant reference "${merchantRef}"`);
+        }
+    }
+
+    /**
+     * Data for PaymentMethodsSettingsPage
+     * @param {string} username Options: dummy_automated_tests
+     * @returns {Array<Object>}
+     */
+    countriesMerchantRefs(username = 'dummy_automated_tests') {
+        switch (username) {
+            case 'dummy_automated_tests':
+                return [
+                    { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
+                    { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
+                    { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
+                    { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
+                ];
+            default:
+                throw new Error(`Invalid username "${username}"`);
         }
     }
 
