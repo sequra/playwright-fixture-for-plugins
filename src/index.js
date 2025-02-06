@@ -8,3 +8,4 @@ export { default as PaymentMethodsSettingsPage } from './pages/PaymentMethodsSet
 export { default as ProductPage } from './pages/ProductPage.js';
 export { default as CheckoutPage } from './pages/CheckoutPage.js';
 export { default as OnboardingSettingsPage } from './pages/OnboardingSettingsPage.js';
+export { default as GeneralSettingsPage } from './pages/GeneralSettingsPage.js';

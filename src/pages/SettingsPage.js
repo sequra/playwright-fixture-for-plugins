@@ -38,6 +38,12 @@ export default class SettingsPage extends Page {
             dropdownListItem: text => this.page.locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
             dropdownSelectedListItem: text => this.page.locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
             multiSelect: () => this.page.locator('.sq-multi-item-selector'),
+            toggle: (parentLocator, locate = 'input') => parentLocator.locator(locate === 'label' ? '.sq-toggle' : '.sqp-toggle-input'),
+            selectedItem: (locator, hasText = '') => {
+                const loc = locator.locator('.sqp-selected-item');
+                return hasText ? loc.filter({ hasText }) : loc;
+            },
+            selectedItemRemoveButton: (locator, hasText = '') => this.locators.selectedItem(locator, hasText).locator('.sqp-remove-button'),
         };
     }
 
@@ -107,5 +113,38 @@ export default class SettingsPage extends Page {
         await this.expect(this.locators.inputError()).toBeVisible(opt);
         await this.expect(this.locators.saveButton()).toHaveCount(0, opt);
         await this.expect(this.locators.cancelButton()).toHaveCount(0, opt);
+    }
+
+    /**
+     * Expect the locator to be checked
+     * @param {import('@playwright/test').Locator} locator 
+     * @param {string} fieldName 
+     * @param {boolean} value 
+     */
+    async expectToBeChecked(locator, fieldName, value) {
+        await this.expect(locator, `${fieldName} should be ${value ? 'ON' : 'OFF'}`).toBeChecked({ checked: value });
+    }
+
+    /**
+     * Expect the locator to be visible
+     * @param {import('@playwright/test').Locator} locator 
+     * @param {string} fieldName 
+     * @param {boolean} value 
+     */
+    async expectToBeVisible(locator, fieldName, value) {
+        await this.expect(locator, `${fieldName} should be ${value ? 'visible' : 'hidden'}`).toBeVisible({ visible: value });
+    }
+
+    /**
+     * Set toggle ON/OFF
+     * @param {object} options 
+     * @param {boolean} options.enabled
+     * @param {function} locator Must return a locator and receive an optional parameter locate with the value 'label' or 'input'
+     * @param {*} fieldName The name of the field
+     */
+    async setToggle(options, locator, fieldName) {
+        const { enabled } = options;
+        await this.expectToBeChecked(locator(), `"${fieldName}" toggle`, !enabled);
+        await locator('label').click();
     }
 }

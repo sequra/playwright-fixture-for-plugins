@@ -10,8 +10,9 @@ export default class DataProvider extends Fixture {
      * @param {import('@playwright/test').Expect} expect
      * @param {import('@playwright/test').Request} request
      */
-    constructor(page, baseURL, expect) {
+    constructor(page, baseURL, expect, request) {
         super(page, baseURL, expect);
+        this.request = request;
     }
 
     /**
@@ -121,5 +122,13 @@ export default class DataProvider extends Fixture {
         }
     }
 
-
+    /**
+     * Get the public IP address currently used
+     * @returns {Promise<string>}
+     */
+    async publicIP() {
+        const response = await this.request.get('https://checkip.amazonaws.com/');
+        const publicIP = await response.text();
+        return publicIP.trim();
+    }
 }
