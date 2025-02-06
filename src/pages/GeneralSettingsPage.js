@@ -40,6 +40,7 @@ export default class GeneralSettingsPage extends SettingsPage {
             allowRegistrationItemsToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Allow registration items' }), locate),
             defaultServicesEndDateInput: () => this.page.locator('.sq-text-input.sq-default-services-end-date'),
             countryInput: code => this.page.locator(`[name="country_${code}"]`),
+            countryInputError: () => this.page.locator('.sq-country-field-wrapper .sqp-input-error').filter({ hasText: 'This field is invalid.' })
         };
     }
 
@@ -228,5 +229,12 @@ export default class GeneralSettingsPage extends SettingsPage {
             await dropdownListItem(name).click();
             await countryInput(code).fill(merchantRef);
         }
+    }
+
+    /**
+     * Expect the country input error to be visible
+     */
+    async expectCountryInputErrorToBeVisible() {
+        await this.expectToBeVisible(this.locators.countryInputError(), 'Country input error', true);
     }
 }
