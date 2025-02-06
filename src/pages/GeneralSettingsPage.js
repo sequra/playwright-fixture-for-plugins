@@ -122,15 +122,17 @@ export default class GeneralSettingsPage extends SettingsPage {
 
         await this.expectExcludedCategoriesToBeEmpty();
 
-        if (categories) {
-            await excludedCategories().click();
-            for (const category of categories) {
-                const listItemLocator = excludedCategories().getByText(category);
-                await listItemLocator.waitFor({ state: 'visible' });
-                await listItemLocator.click();
-                await selectedItem(excludedCategories(), category).waitFor({ state: 'visible' });
-            }
+        if (!categories) {
+            return;
         }
+        await excludedCategories().click();
+        for (const category of categories) {
+            const listItemLocator = excludedCategories().getByText(category);
+            await listItemLocator.waitFor({ state: 'visible' });
+            await listItemLocator.click();
+            await selectedItem(excludedCategories(), category).waitFor({ state: 'visible' });
+        }
+        await this.closeDropdownList(excludedCategories());
     }
 
     /**
@@ -223,12 +225,16 @@ export default class GeneralSettingsPage extends SettingsPage {
             await selectedItemRemoveButton(countriesMultiSelect()).first().click();
         }
         await this.expectAvailableCountries({ countries: [] });
+        if (!countries) {
+            return;
+        }
         await countriesMultiSelect().click();
         await dropdownListVisible().waitFor({ timeout: 1000 });
         for (const { code, name, merchantRef } of countries) {
             await dropdownListItem(name).click();
             await countryInput(code).fill(merchantRef);
         }
+        await this.closeDropdownList(countriesMultiSelect());
     }
 
     /**

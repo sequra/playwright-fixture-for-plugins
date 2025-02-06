@@ -147,4 +147,13 @@ export default class SettingsPage extends Page {
         await this.expectToBeChecked(locator(), `"${fieldName}" toggle`, !enabled);
         await locator('label').click();
     }
+
+    /**
+     * Close open dropdown
+     * @param {import('@playwright/test').Locator} locator Dropdown locator
+     */
+    async closeDropdownList(locator) {
+        // Do click out of the dropdown list to close it
+        await locator.click({ force: true, position: { x: 0, y: -20 } });
+    }
 }
