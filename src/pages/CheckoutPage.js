@@ -24,6 +24,7 @@ export default class CheckoutPage extends Page {
     */
     initLocators() {
         return {
+            paymentMethods: opt => this.paymentMethodsLocator(opt),
             paymentMethodTitle: opt => this.paymentMethodTitleLocator(opt),
             paymentMethodInput: opt => this.paymentMethodInputLocator(opt),
             sqIframeI1: () => this.page.frameLocator(this.selectors.sqIframeI1),
@@ -82,6 +83,15 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Provide the locator seQura payment methods
+     * @param {Object} options
+     * @returns {import("@playwright/test").Locator}
+     */
+    paymentMethodsLocator(options) {
+        throw new Error('Not implemented');
+    }
+
+    /**
      * Fill the checkout page's form
      * @param {Object} options Contains the data to fill the form
      * @param {string} options.email Email
@@ -111,6 +121,21 @@ export default class CheckoutPage extends Page {
         const { title, product } = options;
         await this.expect(this.locators.paymentMethodInput(options), `"${product}" payment method input should be visible`).toBeVisible({ timeout: 10000 });
         await this.expect(this.locators.paymentMethodTitle(options), `"${title}" payment method should be visible`).toBeVisible({ timeout: 10000 });
+    }
+
+    /**
+     * Expect at least one SeQura payment method to be available or not
+     * @param {object} options 
+     * @param {boolean} options.available Whether the payment methods should be available
+     */
+    async expectAnyPaymentMethod(options = { available: true }) {
+        const { available = true } = options || {};
+        const locator = this.locators.paymentMethods(options);
+        if (available) {
+            await this.expect(locator.first(), `"seQura payment methods should be available`).toBeVisible({ timeout: 10000 });
+        } else {
+            await this.expect(locator, `"seQura payment methods should not be available`).toHaveCount(0, { timeout: 10000 });
+        }
     }
 
     /**
