@@ -31,6 +31,7 @@ export default class ConnectionSettingsPage extends SettingsPage {
             },
             username: () => this.page.locator('[name="username-input"]'),
             password: () => this.page.locator('[name="password-input"]'),
+            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' })
         };
     }
 
@@ -71,5 +72,12 @@ export default class ConnectionSettingsPage extends SettingsPage {
         await this.expect(this.locators.username(), `Username field should be "${username}`).toHaveValue(username);
         await this.expect(this.locators.password(), `Password field should be "${password}`).toHaveValue(password);
         await this.expectToBeChecked(this.locators.envOption('input', env), `${'sandbox' === env ? 'Sandbox' : 'Live'} environment`, true);
+    }
+
+    /**
+     * Expect the credentials error to be visible
+     */
+    async expectCredentialsErrorToBeVisible() {
+        await this.locators.credentialsError().waitFor({ state: 'visible' });
     }
 }
