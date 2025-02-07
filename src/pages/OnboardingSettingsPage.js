@@ -60,10 +60,12 @@ export default class OnboardingSettingsPage extends SettingsPage {
      */
     async fillCountriesForm(options) {
         const { countries } = options;
-        await this.locators.multiSelect().click();
+        const multiSelectLocator = this.locators.multiSelect();
+        await multiSelectLocator.click();
         for (const { name } of countries) {
             await this.locators.dropdownListItem(name).click();
         }
+        await this.closeDropdownList(multiSelectLocator);
         for (const { code, merchantRef } of countries) {
             await this.locators.merchantRefInput(code).fill(merchantRef);
         }
