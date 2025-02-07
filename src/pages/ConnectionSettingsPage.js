@@ -25,7 +25,10 @@ export default class ConnectionSettingsPage extends SettingsPage {
             ...super.initLocators(),
             modalConfirmButton: () => this.page.locator('#sq-modal .sq-button.sqt--primary'),
             disconnect: () => this.page.getByRole('button', { name: 'Disconnect' }),
-            sandboxOption: (locate = 'input') => this.page.locator(locate === 'input' ? '[type="radio"][value="sandbox"]' : '.sq-radio-input:has([type="radio"][value="sandbox"])'),
+            envOption: (locate = 'input', env = 'sandbox') => {
+                let selector = `[type="radio"][value="${env}"]`;
+                return this.page.locator(locate === 'input' ? selector : `.sq-radio-input:has(${selector})`);
+            },
             username: () => this.page.locator('[name="username-input"]'),
             password: () => this.page.locator('[name="password-input"]'),
         };
@@ -47,10 +50,11 @@ export default class ConnectionSettingsPage extends SettingsPage {
      * @param {Object} options 
      * @param {string} options.username The username to use
      * @param {string} options.password The password to use
+     * @param {string} options.env The environment to use
      */
     async fillForm(options) {
-        const { sandboxOption, username, password } = this.locators;
-        await sandboxOption('label').click();
+        const { envOption, username, password } = this.locators;
+        await envOption('label', options.env).click();
         await username().fill(options.username);
         await password().fill(options.password);
     }
@@ -60,11 +64,12 @@ export default class ConnectionSettingsPage extends SettingsPage {
      * @param {Object} options 
      * @param {string} options.username The username to use
      * @param {string} options.password The password to use
+     * @param {string} options.env The environment to use
      */
     async expectFormToHaveValues(options) {
         const { username, password, env } = options;
         await this.expect(this.locators.username(), `Username field should be "${username}`).toHaveValue(username);
         await this.expect(this.locators.password(), `Password field should be "${password}`).toHaveValue(password);
-        await this.expectToBeChecked(this.locators.sandboxOption(), 'Sandbox environment', true);
+        await this.expectToBeChecked(this.locators.envOption('input', env), `${'sandbox' === env ? 'Sandbox' : 'Live'} environment`, true);
     }
 }
