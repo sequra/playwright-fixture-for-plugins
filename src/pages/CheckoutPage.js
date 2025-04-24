@@ -38,6 +38,9 @@ export default class CheckoutPage extends Page {
             sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
+            moreInfoIframe: () => this.page.frameLocator('iframe'),
+            moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
+            moreInfoLink: options => this.moreInfoLink(options)
         };
     }
 
@@ -88,6 +91,16 @@ export default class CheckoutPage extends Page {
      * @returns {import("@playwright/test").Locator}
      */
     paymentMethodsLocator(options) {
+        throw new Error('Not implemented');
+    }
+
+    /**
+     * Provide the locator for the moreInfo tag 
+     * 
+     * @param {Object} options
+     * @returns {import("@playwright/test").Locator}
+     */
+    moreInfoLinkLocator(options) {
         throw new Error('Not implemented');
     }
 
@@ -280,5 +293,17 @@ export default class CheckoutPage extends Page {
      */
     async expectOrderChangeTo(backOffice, options) {
         throw new Error('Not implemented');
+    }
+
+     /**
+     * Test if the "+ info" link is working properly
+     * @param {Object} options
+     * @param {string} options.product seQura product (i1, pp3, etc)
+     * @param {string} options.campaign Campaign name
+     * @returns {Promise<void>}
+     */
+     async openAndCloseEducationalPopup(options) {  
+        await this.locators.moreInfoLink(options).click();
+        await this.locators.moreInfoCloseBtn().click();
     }
 }
