@@ -40,7 +40,7 @@ export default class CheckoutPage extends Page {
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
             moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
-            moreInfoLink: options => this.moreInfoLink(options)
+            moreInfoLink: options => this.moreInfoLinkLocator(options)
         };
     }
 
