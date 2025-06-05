@@ -10,3 +10,4 @@ export { default as CheckoutPage } from './pages/CheckoutPage.js';
 export { default as OnboardingSettingsPage } from './pages/OnboardingSettingsPage.js';
 export { default as GeneralSettingsPage } from './pages/GeneralSettingsPage.js';
 export { default as ConnectionSettingsPage } from './pages/ConnectionSettingsPage.js';
+export { default as WidgetSettingsPage } from './pages/WidgetSettingsPage.js';

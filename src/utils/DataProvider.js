@@ -1,4 +1,5 @@
 import Fixture from '../base/Fixture.js';
+/** @typedef {import('./types.js').WidgetOptions} WidgetOptions */
 
 /**
  * Provide data for the tests
@@ -130,5 +131,43 @@ export default class DataProvider extends Fixture {
         const response = await this.request.get('https://checkip.amazonaws.com/');
         const publicIP = await response.text();
         return publicIP.trim();
+    }
+
+    /**
+     * Configuration for the widget form
+     * @returns {WidgetOptions} Configuration for the widget
+     */
+    widgetOptions() {
+        return {
+            widgetConfig: '{"alignment":"center","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner"}',
+            product: {
+                display: true,
+                priceSel: '',
+                altPriceSel: '',
+                altPriceTriggerSel: '',
+                locationSel: '',
+                customLocations: [
+                    {
+                        paymentMethod: 'Paga Después',
+                        display: true,
+                        locationSel: '',
+                        widgetConfig: '{"alignment":"left","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner","branding":"black"}',
+                    }
+                ]
+            },
+            cart: {
+                display: true,
+                priceSel: '',
+                locationSel: '',
+                paymentMethod: 'Paga Fraccionado',
+            },
+            productListing: {
+                display: true,
+                useSelectors: true,
+                priceSel: '',
+                locationSel: '',
+                paymentMethod: 'Paga Fraccionado',
+            },
+        }
     }
 }

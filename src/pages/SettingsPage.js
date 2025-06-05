@@ -34,17 +34,46 @@ export default class SettingsPage extends Page {
             cancelButton: () => this.page.locator('.sq-button.sqp-cancel:not([disabled])'),
             inputError: () => this.page.locator('.sqp-input-error'),
             selectedOption: text => this.page.locator('span.sqs--selected', { hasText: text }),
-            dropdownButton: () => this.page.locator('.sqp-dropdown-button'),
-            dropdownListItem: text => this.page.locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
-            dropdownSelectedListItem: text => this.page.locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
-            multiSelect: () => this.page.locator('.sq-multi-item-selector'),
+            dropdownButton: (parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button'),
+            dropdownListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
+            dropdownSelectedListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
+            multiSelect: (parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector'),
             toggle: (parentLocator, locate = 'input') => parentLocator.locator(locate === 'label' ? '.sq-toggle' : '.sqp-toggle-input'),
             selectedItem: (locator, hasText = '') => {
                 const loc = locator.locator('.sqp-selected-item');
                 return hasText ? loc.filter({ hasText }) : loc;
             },
             selectedItemRemoveButton: (locator, hasText = '') => this.locators.selectedItem(locator, hasText).locator('.sqp-remove-button'),
+            detailsSummary: details => details.locator('summary'),
+            detailsRemoveBtn: details => details.locator('.sq-remove'),
         };
+    }
+
+    /**
+     * Open the details of a section
+     * @param {import('@playwright/test').Locator} details Locator for the details section
+     * @returns {Promise<void>}
+     */
+    async openDetails(details) {
+        try {
+            await this.expect(this.locators.detailsRemoveBtn(details)).toBeHidden({ timeout: 1 });
+            const summary = this.locators.detailsSummary(details);
+            const box = await summary.boundingBox();
+            await summary.click({ position: { x: box.width - 8, y: box.height / 2 } }); // click on the expand button.
+        } catch {
+        }
+    }
+
+    /**
+     * Remove all details from the page using a locator function
+     * @param {function} detailsLocatorFn Must return a Locator to the details and receive no parameters
+     */
+    async removeAllDetails(detailsLocatorFn) {
+        while ((await detailsLocatorFn().count()) > 0) {
+            const details = detailsLocatorFn().last();
+            await this.openDetails(details);
+            await this.locators.detailsRemoveBtn(details).click();
+        }
     }
 
     /**
