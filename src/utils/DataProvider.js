@@ -134,18 +134,47 @@ export default class DataProvider extends Fixture {
     }
 
     /**
-     * Configuration for the widget form
+     * Configuration for the widget form. Everything is set to false
      * @returns {WidgetOptions} Configuration for the widget
      */
-    widgetOptions() {
+    defaultWidgetOptions() {
         return {
             widgetConfig: '{"alignment":"center","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner"}',
             product: {
-                display: true,
+                display: false,
                 priceSel: '',
                 altPriceSel: '',
                 altPriceTriggerSel: '',
                 locationSel: '',
+                customLocations: []
+            },
+            cart: {
+                display: false,
+                priceSel: '',
+                locationSel: '',
+                paymentMethod: 'Paga Fraccionado',
+            },
+            productListing: {
+                display: false,
+                useSelectors: true,
+                priceSel: '',
+                locationSel: '',
+                paymentMethod: 'Paga Fraccionado',
+            },
+        }
+    }
+
+    /**
+     * Configuration for the widget form with all options enabled
+     * @returns {WidgetOptions} Configuration for the widget
+     */
+    widgetOptions() {
+        const defaultOptions = this.defaultWidgetOptions();
+        return {
+            ...defaultOptions,
+            product: {
+                ...defaultOptions.product,
+                display: true,
                 customLocations: [
                     {
                         paymentMethod: 'Paga Después',
@@ -156,17 +185,12 @@ export default class DataProvider extends Fixture {
                 ]
             },
             cart: {
-                display: true,
-                priceSel: '',
-                locationSel: '',
-                paymentMethod: 'Paga Fraccionado',
+                ...defaultOptions.cart,
+                display: true
             },
             productListing: {
-                display: true,
-                useSelectors: true,
-                priceSel: '',
-                locationSel: '',
-                paymentMethod: 'Paga Fraccionado',
+                ...defaultOptions.productListing,
+                display: true
             },
         }
     }
