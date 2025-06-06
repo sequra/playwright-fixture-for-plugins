@@ -130,7 +130,7 @@ export default class WidgetSettingsPage extends SettingsPage {
             await selForCartPriceInput().fill(cart.priceSel);
             await selForCartLocationInput().fill(cart.locationSel);
             await dropdownButton(cartPaymentMethodSelectContainer()).click();
-            await dropdownListItem(cart.paymentMethod).click();
+            await dropdownListItem(cart.paymentMethod, cartPaymentMethodSelectContainer()).click();
             await this.expect(dropdownSelectedListItem(cart.paymentMethod, cartPaymentMethodSelectContainer()), `The payment method "${cart.paymentMethod}" is shown as selected`).toBeVisible();
         }
 
@@ -154,7 +154,7 @@ export default class WidgetSettingsPage extends SettingsPage {
                 await selForProductListingLocationInput().fill(productListing.locationSel);
             }
             await dropdownButton(productListingPaymentMethodSelectContainer()).click();
-            await dropdownListItem(productListing.paymentMethod).click();
+            await dropdownListItem(productListing.paymentMethod, productListingPaymentMethodSelectContainer()).click();
             await this.expect(dropdownSelectedListItem(productListing.paymentMethod, productListingPaymentMethodSelectContainer()), `The payment method "${productListing.paymentMethod}" is shown as selected`).toBeVisible();
         }
     }
