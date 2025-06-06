@@ -203,7 +203,7 @@ export default class WidgetSettingsPage extends SettingsPage {
         if (options.cart.display) {
             await this.expect(this.locators.selForCartPriceInput()).toHaveValue(options.cart.priceSel);
             await this.expect(this.locators.selForCartLocationInput()).toHaveValue(options.cart.locationSel);
-            await this.expect(dropdownSelectedListItem(options.cart.paymentMethod, this.locators.cartPaymentMethodSelectContainer()), `The payment method "${options.cart.paymentMethod}" is shown as selected`).toBeVisible();
+            await this.expect(this.locators.dropdownSelectedListItem(options.cart.paymentMethod, this.locators.cartPaymentMethodSelectContainer()), `The payment method "${options.cart.paymentMethod}" is shown as selected`).toBeVisible();
         }
 
         await this.expectToBeChecked(this.locators.displayWidgetInListingToggle(), '"Show installment amount in product listing" toggle', options.productListing.display);
