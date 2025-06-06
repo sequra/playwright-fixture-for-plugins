@@ -139,7 +139,9 @@ export default class SettingsPage extends Page {
      */
     async expectErrorMessageToBeVisible() {
         const opt = { timeout: 100 };
-        await this.expect(this.locators.inputError()).toBeVisible(opt);
+        // expect at least one error message to be visible
+        this.expect((await this.locators.inputError().filter({ visible: true }).count())).toBeTruthy();
+
         await this.expect(this.locators.saveButton()).toHaveCount(0, opt);
         await this.expect(this.locators.cancelButton()).toHaveCount(0, opt);
     }
