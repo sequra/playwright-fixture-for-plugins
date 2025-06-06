@@ -149,19 +149,23 @@ export default class SettingsPage extends Page {
      * @param {import('@playwright/test').Locator} locator 
      * @param {string} fieldName 
      * @param {boolean} value 
+     * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
      */
-    async expectToBeChecked(locator, fieldName, value) {
-        await this.expect(locator, `${fieldName} should be ${value ? 'ON' : 'OFF'}`).toBeChecked({ checked: value });
+    async expectToBeChecked(locator, fieldName, value, timeout = null) {
+        const options = timeout !== null ? { checked: value, timeout: timeout } : { checked: value };
+        await this.expect(locator, `${fieldName} should be ${value ? 'ON' : 'OFF'}`).toBeChecked(options);
     }
 
     /**
      * Expect the locator to be visible
      * @param {import('@playwright/test').Locator} locator 
      * @param {string} fieldName 
-     * @param {boolean} value 
+     * @param {boolean} value
+     * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
      */
-    async expectToBeVisible(locator, fieldName, value) {
-        await this.expect(locator, `${fieldName} should be ${value ? 'visible' : 'hidden'}`).toBeVisible({ visible: value });
+    async expectToBeVisible(locator, fieldName, value, timeout = null) {
+        const options = timeout !== null ? { visible: value, timeout: timeout } : { visible: value };
+        await this.expect(locator, `${fieldName} should be ${value ? 'visible' : 'hidden'}`).toBeVisible(options);
     }
 
     /**
@@ -170,11 +174,12 @@ export default class SettingsPage extends Page {
      * @param {boolean} options.enabled
      * @param {function} locator Must return a locator and receive an optional parameter locate with the value 'label' or 'input'
      * @param {*} fieldName The name of the field
+     * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
      */
-    async setToggle(options, locator, fieldName) {
+    async setToggle(options, locator, fieldName, timeout = null) {
         const { enabled } = options;
-        await this.expectToBeChecked(locator(), `"${fieldName}" toggle`, !enabled);
-        await locator('label').click();
+        await this.expectToBeChecked(locator(), `"${fieldName}" toggle`, !enabled, timeout);
+        await locator('label').click({ timeout: 0 });
     }
 
     /**

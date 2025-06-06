@@ -72,7 +72,7 @@ export default class WidgetSettingsPage extends SettingsPage {
         await widgetConfiguratorTextarea().fill(widgetConfig);
 
         try {
-            await this.setToggle({ enabled: product.display }, displayWidgetInProductToggle, '"Display widget on product page" toggle');
+            await this.setToggle({ enabled: product.display }, displayWidgetInProductToggle, 'Display widget on product page', 1);
         } catch (e) {
             // Ignore, toggle is already in the desired state
         }
@@ -113,7 +113,7 @@ export default class WidgetSettingsPage extends SettingsPage {
         }
 
         try {
-            await this.setToggle({ enabled: cart.display }, displayWidgetInCartToggle, '"Show installment amount in cart page" toggle');
+            await this.setToggle({ enabled: cart.display }, displayWidgetInCartToggle, 'Show installment amount in cart page', 1);
         } catch (e) {
             // Ignore, toggle is already in the desired state
         }
@@ -135,7 +135,7 @@ export default class WidgetSettingsPage extends SettingsPage {
         }
 
         try {
-            await this.setToggle({ enabled: productListing.display }, displayWidgetInListingToggle, '"Show installment amount in product listing" toggle');
+            await this.setToggle({ enabled: productListing.display }, displayWidgetInListingToggle, 'Show installment amount in product listing', 1);
         } catch (e) {
             // Ignore, toggle is already in the desired state
         }
@@ -201,7 +201,7 @@ export default class WidgetSettingsPage extends SettingsPage {
                 await this.expect(this.locators.selForProductListingPriceInput()).toHaveValue(options.productListing.priceSel);
                 await this.expect(this.locators.selForProductListingLocationInput()).toHaveValue(options.productListing.locationSel);
             }
-            
+
             await this.expect(this.locators.dropdownSelectedListItem(options.productListing.paymentMethod, this.locators.productListingPaymentMethodSelectContainer()), `The payment method "${options.productListing.paymentMethod}" is shown as selected`).toBeVisible();
         }
     }
