@@ -49,7 +49,7 @@ export default class WidgetSettingsPage extends SettingsPage {
             selForProductListingLocationInput: () => this.page.locator('[name="listingLocationSelector"]'),
             productListingPaymentMethodSelectContainer: () => this.page.locator('.sqm--table-dropdown.sq-listing-related-field'),
 
-            displayWidgetInProductToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Display widget on product page' }), locate),
+            displayWidgetInProductToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Display widget on product page' }).first(), locate),
             displayWidgetInCartToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Show installment amount in cart page' }), locate),
             displayWidgetInListingToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Show installment amount in product listing' }), locate),
         };
