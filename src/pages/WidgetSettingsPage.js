@@ -70,6 +70,7 @@ export default class WidgetSettingsPage extends SettingsPage {
         } = this.locators;
         // Fill the widget styles
         await widgetConfiguratorTextarea().fill(widgetConfig);
+        await widgetConfiguratorTextarea().blur();
 
         try {
             await this.setToggle({ enabled: product.display }, displayWidgetInProductToggle, 'Display widget on product page', 1);
@@ -91,9 +92,13 @@ export default class WidgetSettingsPage extends SettingsPage {
             } = this.locators;
             // Fill the product page selectors
             await selForPriceInput().fill(product.priceSel);
+            await selForPriceInput().blur();
             await selForAltPriceInput().fill(product.altPriceSel);
+            await selForAltPriceInput().blur();
             await selForAltPriceTriggerInput().fill(product.altPriceTriggerSel);
+            await selForAltPriceTriggerInput().blur();
             await selForDefaultLocationInput().fill(product.locationSel);
+            await selForDefaultLocationInput().blur();
 
             // Setup custom locations
             await this.removeAllDetails(customLocationsDetails);
@@ -108,7 +113,9 @@ export default class WidgetSettingsPage extends SettingsPage {
                 }
 
                 await customLocationLocationInput(details).fill(customLocation.locationSel);
+                await customLocationLocationInput(details).blur();
                 await customLocationWidgetConfigTextarea(details).fill(customLocation.widgetConfig);
+                await customLocationWidgetConfigTextarea(details).blur();
             }
         }
 
@@ -128,7 +135,9 @@ export default class WidgetSettingsPage extends SettingsPage {
             } = this.locators;
             // Fill the cart page selectors
             await selForCartPriceInput().fill(cart.priceSel);
+            await selForCartPriceInput().blur();
             await selForCartLocationInput().fill(cart.locationSel);
+            await selForCartLocationInput().blur();
             await dropdownButton(cartPaymentMethodSelectContainer()).click();
             await dropdownListItem(cart.paymentMethod, cartPaymentMethodSelectContainer()).click();
             await this.expect(dropdownSelectedListItem(cart.paymentMethod, cartPaymentMethodSelectContainer()), `The payment method "${cart.paymentMethod}" is shown as selected`).toBeVisible();
@@ -151,7 +160,9 @@ export default class WidgetSettingsPage extends SettingsPage {
             if (productListing.useSelectors) {
                 // Fill the listing page selectors
                 await selForProductListingPriceInput().fill(productListing.priceSel);
+                await selForProductListingPriceInput().blur();
                 await selForProductListingLocationInput().fill(productListing.locationSel);
+                await selForProductListingLocationInput().blur();
             }
             await dropdownButton(productListingPaymentMethodSelectContainer()).click();
             await dropdownListItem(productListing.paymentMethod, productListingPaymentMethodSelectContainer()).click();
