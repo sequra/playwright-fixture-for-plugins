@@ -15,13 +15,15 @@ export default class ProductPage extends Page {
         return {
             qtyInput: opt => this.qtyLocator(opt),
             addToCartButton: opt => this.addToCartLocator(opt),
-            widget: () => this.page.locator('.sequra-promotion-widget'),
-            /**
-             * Locator for the widget iframe based on the provided options
-             * @param {FrontEndWidgetOptions} opt 
+             /**
+             * Locator for the widget iframe based on the provided options or any widget if no options are provided
+             * @param {FrontEndWidgetOptions|null} opt 
              * @returns {import('@playwright/test').Locator}
              */
-            widgetIframe: opt => {
+            widget: (opt = null) => {
+                if (!opt) {
+                    return this.page.locator('.sequra-promotion-widget')
+                }
                 const {
                     locationSel,
                     widgetConfig,
@@ -39,11 +41,17 @@ export default class ProductPage extends Page {
                 if (campaign) {
                     containerSel += `[data-campaign="${campaign}"]`;
                 }
-                if(registrationAmount !== null) {
+                if (registrationAmount !== null) {
                     containerSel += `[data-registration-amount="${registrationAmount}"]`;
                 }
-                return this.page.locator(`${containerSel} iframe.Sequra__PromotionalWidget`)
+                return this.page.locator(containerSel);
             },
+            /**
+             * Locator for the widget iframe based on the provided options
+             * @param {FrontEndWidgetOptions} opt 
+             * @returns {import('@playwright/test').Locator}
+             */
+            widgetIframe: opt => this.locators.widget(opt).locator('iframe.Sequra__PromotionalWidget'),
         };
     }
 
@@ -113,7 +121,7 @@ export default class ProductPage extends Page {
     }
 
     /**
-     * Expect the widgets not to be visible
+     * Expect no widgets to be visible
      */
     async expectWidgetsNotToBeVisible() {
         await this.expect(this.locators.widget()).toHaveCount(0);
@@ -126,5 +134,14 @@ export default class ProductPage extends Page {
      */
     async expectWidgetToBeVisible(options) {
         await this.locators.widgetIframe(options).waitFor({ timeout: 10000 });
+    }
+
+    /**
+     * Expect that the widget is not visible
+     * 
+     * @param {FrontEndWidgetOptions} options
+     */
+    async expectWidgetNotToBeVisible(options) {
+         await this.expect(this.locators.widget(options)).toHaveCount(0);
     }
 }
