@@ -261,13 +261,10 @@ export default class DataProvider extends Fixture {
      * @returns {FrontEndWidgetOptions} Options for the front end widget
      */
     frontEndWidgetOptions = (product, campaign, amount, registrationAmount) => {
-        const {
-            product,
-            widgetConfig
-        } = this.widgetOptions();
+        const widget = this.widgetOptions();
         return {
-            locationSel: product.locationSel,
-            widgetConfig: widgetConfig,
+            locationSel: widget.product.locationSel,
+            widgetConfig: widget.widgetConfig,
             product: product,
             amount: amount,
             registrationAmount: registrationAmount,
