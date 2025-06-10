@@ -258,7 +258,7 @@ export default class DataProvider extends Fixture {
      * @param {string|null} campaign 
      * @param {number} amount
      * @param {number|null} registrationAmount 
-     * @returns 
+     * @returns {FrontEndWidgetOptions} Options for the front end widget
      */
     frontEndWidgetOptions = (product, campaign, amount, registrationAmount) => {
         const {
@@ -275,15 +275,24 @@ export default class DataProvider extends Fixture {
         };
     }
 
-    pp3FrontEndWidgetOptions = () => this.frontEndWidgetOptions('pp3', null, 5900, null);
-    sp1FrontEndWidgetOptions = () => this.frontEndWidgetOptions('sp1', 'permanente', 5900, null);
+    /**
+     * @returns {FrontEndWidgetOptions} Options for the i1 widget
+     */
+    pp3FrontEndWidgetOptions = () => {
+        throw new Error(`Unimplemented method "pp3FrontEndWidgetOptions"`);
+    }
+
+    /**
+     * @returns {FrontEndWidgetOptions} Options for the sp1 widget
+     */
+    sp1FrontEndWidgetOptions = () => {
+        throw new Error(`Unimplemented method "sp1FrontEndWidgetOptions"`);
+    }
+
+    /**
+     * @returns {FrontEndWidgetOptions} Options for the i1 widget
+     */
     i1FrontEndWidgetOptions = () => {
-        const opts = this.frontEndWidgetOptions('i1', null, 5900, null);
-        const widget = this.widgetOptions();
-        return {
-            ...opts,
-            locationSel: widget.product.customLocations[0].locationSel || widget.product.locationSel,
-            widgetConfig: widget.product.customLocations[0].widgetConfig || widget.product.widgetConfig,
-        };
+        throw new Error(`Unimplemented method "i1FrontEndWidgetOptions"`);
     }
 }
