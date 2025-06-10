@@ -1,4 +1,5 @@
 import Page from "./Page.js";
+/** @typedef {import('../utils/types.js').FrontEndWidgetOptions} FrontEndWidgetOptions */
 
 /**
  * Product page
@@ -14,6 +15,32 @@ export default class ProductPage extends Page {
         return {
             qtyInput: opt => this.qtyLocator(opt),
             addToCartButton: opt => this.addToCartLocator(opt),
+            widget: () => this.page.locator('.sequra-promotion-widget'),
+            /**
+             * Locator for the widget iframe based on the provided options
+             * @param {FrontEndWidgetOptions} opt 
+             * @returns {import('@playwright/test').Locator}
+             */
+            widgetIframe: opt => {
+                const {
+                    locationSel,
+                    widgetConfig,
+                    product,
+                    amount,
+                    registrationAmount,
+                    campaign = null
+                } = opt;
+                let containerSel = `${locationSel} ~ .sequra-promotion-widget.sequra-promotion-widget--${product}`;
+                const styles = JSON.parse(widgetConfig);
+                Object.keys(styles).forEach(key => {
+                    containerSel += '' !== styles[key] ? `[data-${key}="${styles[key]}"]` : `[data-${key}]`;
+                });
+                containerSel += `[data-amount="${amount}"][data-registration-amount="${registrationAmount}"][data-loaded="1"]`;
+                if (campaign) {
+                    containerSel += `[data-campaign="${campaign}"]`;
+                }
+                return this.page.locator(`${containerSel} iframe.Sequra__PromotionalWidget`)
+            },
         };
     }
 
@@ -80,5 +107,21 @@ export default class ProductPage extends Page {
         await qtyInput(options).fill(`${quantity || 1}`);
         await addToCartButton(options).click();
         await this.expectProductIsInCart(options);
+    }
+
+    /**
+     * Expect the widgets not to be visible
+     */
+    async expectWidgetsNotToBeVisible() {
+        await this.expect(this.locators.widget()).toHaveCount(0);
+    }
+
+    /**
+     * Expect the widget to be visible
+     * 
+     * @param {FrontEndWidgetOptions} options
+     */
+    async expectWidgetToBeVisible(options) {
+        await this.locators.widgetIframe(options).waitFor({ timeout: 10000 });
     }
 }

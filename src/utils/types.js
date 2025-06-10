@@ -42,4 +42,14 @@
  * @property {WidgetOptionsProductListing} productListing Product listing page options
  */
 
+/**
+ * @typedef {Object} FrontEndWidgetOptions
+ * @property {string} locationSel The selector for the location where the widget should be visible
+ * @property {string} widgetConfig The widget configuration as a JSON string
+ * @property {string} product The product type (e.g., 'pay_in_3', 'pay_later')
+ * @property {number} amount The amount for the widget
+ * @property {number} registrationAmount The registration amount for the widget
+ * @property {string|null} campaign The campaign identifier, if applicable
+ */
+
 export { }
