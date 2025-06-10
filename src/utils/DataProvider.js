@@ -194,4 +194,61 @@ export default class DataProvider extends Fixture {
             },
         }
     }
+
+    /**
+     * Options having only product widget options enabled
+     * @returns {WidgetOptions} Configuration for the widget with only product widget options
+     */
+    onlyProductWidgetOptions() {
+        const widgetOptions = super.widgetOptions();
+        return {
+            ...widgetOptions,
+            cart: {
+                ...widgetOptions.cart,
+                display: false
+            },
+            productListing: {
+                ...widgetOptions.productListing,
+                display: false
+            }
+        }
+    }
+
+    /**
+     * Options having only cart widget options enabled
+     * @returns {WidgetOptions} Configuration for the widget with only cart widget options
+     */
+    onlyCartWidgetOptions() {
+        const widgetOptions = super.widgetOptions();
+        return {
+            ...widgetOptions,
+            product: {
+                ...widgetOptions.product,
+                display: false
+            },
+            productListing: {
+                ...widgetOptions.productListing,
+                display: false
+            }
+        }
+    }
+
+    /**
+     * Options having only product listing widget options enabled
+     * @returns {WidgetOptions} Configuration for the widget with only product listing widget options
+     */
+    onlyProductListingWidgetOptions() {
+        const widgetOptions = super.widgetOptions();
+        return {
+            ...widgetOptions,
+            product: {
+                ...widgetOptions.product,
+                display: false
+            },
+            cart: {
+                ...widgetOptions.cart,
+                display: false
+            }
+        }
+    }
 }
