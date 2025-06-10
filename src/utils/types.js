@@ -48,7 +48,7 @@
  * @property {string} widgetConfig The widget configuration as a JSON string
  * @property {string} product The product type (e.g., 'pay_in_3', 'pay_later')
  * @property {number} amount The amount for the widget
- * @property {number} registrationAmount The registration amount for the widget
+ * @property {number|null} registrationAmount The registration amount for the widget, if applicable
  * @property {string|null} campaign The campaign identifier, if applicable
  */
 

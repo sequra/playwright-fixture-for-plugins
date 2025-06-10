@@ -35,9 +35,12 @@ export default class ProductPage extends Page {
                 Object.keys(styles).forEach(key => {
                     containerSel += '' !== styles[key] ? `[data-${key}="${styles[key]}"]` : `[data-${key}]`;
                 });
-                containerSel += `[data-amount="${amount}"][data-registration-amount="${registrationAmount}"][data-loaded="1"]`;
+                containerSel += `[data-amount="${amount}"][data-loaded="1"]`;
                 if (campaign) {
                     containerSel += `[data-campaign="${campaign}"]`;
+                }
+                if(registrationAmount !== null) {
+                    containerSel += `[data-registration-amount="${registrationAmount}"]`;
                 }
                 return this.page.locator(`${containerSel} iframe.Sequra__PromotionalWidget`)
             },
