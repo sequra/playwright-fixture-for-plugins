@@ -251,4 +251,39 @@ export default class DataProvider extends Fixture {
             }
         }
     }
+
+    /**
+     * Front end widget options
+     * @param {string} product 
+     * @param {string|null} campaign 
+     * @param {number} amount
+     * @param {number|null} registrationAmount 
+     * @returns 
+     */
+    frontEndWidgetOptions = (product, campaign, amount, registrationAmount) => {
+        const {
+            product,
+            widgetConfig
+        } = this.widgetOptions();
+        return {
+            locationSel: product.locationSel,
+            widgetConfig: widgetConfig,
+            product: product,
+            amount: amount,
+            registrationAmount: registrationAmount,
+            campaign: campaign
+        };
+    }
+
+    pp3FrontEndWidgetOptions = () => this.frontEndWidgetOptions('pp3', null, 5900, null);
+    sp1FrontEndWidgetOptions = () => this.frontEndWidgetOptions('sp1', 'permanente', 5900, null);
+    i1FrontEndWidgetOptions = () => {
+        const opts = this.frontEndWidgetOptions('i1', null, 5900, null);
+        const widget = this.widgetOptions();
+        return {
+            ...opts,
+            locationSel: widget.product.customLocations[0].locationSel || widget.product.locationSel,
+            widgetConfig: widget.product.customLocations[0].widgetConfig || widget.product.widgetConfig,
+        };
+    }
 }
