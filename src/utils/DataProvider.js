@@ -200,7 +200,7 @@ export default class DataProvider extends Fixture {
      * @returns {WidgetOptions} Configuration for the widget with only product widget options
      */
     onlyProductWidgetOptions() {
-        const widgetOptions = super.widgetOptions();
+        const widgetOptions = this.widgetOptions();
         return {
             ...widgetOptions,
             cart: {
@@ -219,7 +219,7 @@ export default class DataProvider extends Fixture {
      * @returns {WidgetOptions} Configuration for the widget with only cart widget options
      */
     onlyCartWidgetOptions() {
-        const widgetOptions = super.widgetOptions();
+        const widgetOptions = this.widgetOptions();
         return {
             ...widgetOptions,
             product: {
@@ -238,7 +238,7 @@ export default class DataProvider extends Fixture {
      * @returns {WidgetOptions} Configuration for the widget with only product listing widget options
      */
     onlyProductListingWidgetOptions() {
-        const widgetOptions = super.widgetOptions();
+        const widgetOptions = this.widgetOptions();
         return {
             ...widgetOptions,
             product: {
