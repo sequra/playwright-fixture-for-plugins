@@ -66,7 +66,7 @@ export default class PageWithWidgets extends Page {
      * @param {FrontEndWidgetOptions} options
      */
     async expectWidgetToBeVisible(options) {
-        await this.locators.widgetIframe(options).waitFor({ timeout: 10000 });
+        await this.locators.widgetIframe(options).waitFor();
     }
 
     /**
