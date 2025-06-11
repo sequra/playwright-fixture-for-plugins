@@ -216,4 +216,12 @@ export default class WidgetSettingsPage extends SettingsPage {
             await this.expect(this.locators.dropdownSelectedListItem(options.productListing.paymentMethod, this.locators.productListingPaymentMethodSelectContainer()), `The payment method "${options.productListing.paymentMethod}" is shown as selected`).toBeVisible();
         }
     }
+
+    /**
+     * Change the radio button for the "Would you like to use promotional components?" option
+     * @param {boolean} enabled 
+     */
+    async changeUsePromotionalComponentsOption(enabled) {
+        await this.locators.radio(enabled ? 'true' : 'false', 'label').click();
+    }
 }
