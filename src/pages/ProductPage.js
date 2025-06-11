@@ -15,11 +15,11 @@ export default class ProductPage extends Page {
         return {
             qtyInput: opt => this.qtyLocator(opt),
             addToCartButton: opt => this.addToCartLocator(opt),
-             /**
-             * Locator for the widget iframe based on the provided options or any widget if no options are provided
-             * @param {FrontEndWidgetOptions|null} opt 
-             * @returns {import('@playwright/test').Locator}
-             */
+            /**
+            * Locator for the widget iframe based on the provided options or any widget if no options are provided
+            * @param {FrontEndWidgetOptions|null} opt 
+            * @returns {import('@playwright/test').Locator}
+            */
             widget: (opt = null) => {
                 if (!opt) {
                     return this.page.locator('.sequra-promotion-widget')
@@ -63,7 +63,13 @@ export default class ProductPage extends Page {
      * @returns {Promise<void>}
      */
     async goto(options = {}) {
-        await this.page.goto(this.productUrl(options), { waitUntil: 'domcontentloaded' });
+        const url = this.productUrl(options);
+        if (this.page.url() === url) {
+            // Do not reload the page if we are already on the product page
+            return;
+        }
+
+        await this.page.goto(url, { waitUntil: 'domcontentloaded' });
     }
 
     /**
@@ -142,6 +148,6 @@ export default class ProductPage extends Page {
      * @param {FrontEndWidgetOptions} options
      */
     async expectWidgetNotToBeVisible(options) {
-         await this.expect(this.locators.widget(options)).toHaveCount(0);
+        await this.expect(this.locators.widget(options)).toHaveCount(0);
     }
 }

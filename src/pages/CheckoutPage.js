@@ -52,7 +52,12 @@ export default class CheckoutPage extends Page {
      * @returns {Promise<void>}
      */
     async goto(options = {}) {
-        await this.page.goto(this.checkoutUrl(options), { waitUntil: 'domcontentloaded' });
+        const url = this.checkoutUrl(options);
+        if (this.page.url() === url) {
+            // Do not reload the page if we are already on the checkout page
+            return;
+        }
+        await this.page.goto(url, { waitUntil: 'domcontentloaded' });
     }
 
     /**
