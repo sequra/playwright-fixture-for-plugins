@@ -295,4 +295,16 @@ export default class DataProvider extends Fixture {
     i1FrontEndWidgetOptions = (options = {}) => {
         throw new Error(`Unimplemented method "i1FrontEndWidgetOptions"`);
     }
+
+    /**
+     * Options for the cart widget
+    * @param {Object} options Additional options to configure the widget
+    * @param {number} options.amount cart amount
+    * @param {number|null} options.registrationAmount registration amount
+    * @returns {FrontEndWidgetOptions} Options for the cart widget
+    */
+    cartFrontEndWidgetOptions = (options) => {
+        const { amount, registrationAmount } = options;
+        return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount);
+    }
 }
