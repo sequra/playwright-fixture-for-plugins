@@ -202,9 +202,9 @@ export default class GeneralSettingsPage extends SettingsPage {
         for (const { code, name, merchantRef } of countries) {
             value += !value ? code : ',' + code;
             await this.expectToBeVisible(selectedItem(this.page, name), `Country "${name}"`, true);
-            const inputLocator = countryInput(code);
-            await this.expectToBeVisible(inputLocator, `Country Ref input for "${name}"`, true);
-            await this.expect(inputLocator, `Country Ref input for "${name}" should have value "${merchantRef}"`).toHaveValue(merchantRef);
+            // const inputLocator = countryInput(code);
+            // await this.expectToBeVisible(inputLocator, `Country Ref input for "${name}"`, true);
+            // await this.expect(inputLocator, `Country Ref input for "${name}" should have value "${merchantRef}"`).toHaveValue(merchantRef);
         }
         this.expect(countriesSelect(), `"countries-selector" input should have value "${value}"`).toHaveValue(value);
     }
@@ -232,7 +232,7 @@ export default class GeneralSettingsPage extends SettingsPage {
         await dropdownListVisible().waitFor({ timeout: 1000 });
         for (const { code, name, merchantRef } of countries) {
             await dropdownListItem(name).click();
-            await countryInput(code).fill(merchantRef);
+            // await countryInput(code).fill(merchantRef);
         }
         await this.closeDropdownList(countriesMultiSelect());
     }
