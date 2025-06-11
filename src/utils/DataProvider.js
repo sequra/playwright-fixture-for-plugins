@@ -273,23 +273,26 @@ export default class DataProvider extends Fixture {
     }
 
     /**
+     * @param {Object} options Additional options to configure the widget
      * @returns {FrontEndWidgetOptions} Options for the i1 widget
      */
-    pp3FrontEndWidgetOptions = () => {
+    pp3FrontEndWidgetOptions = (options = {}) => {
         throw new Error(`Unimplemented method "pp3FrontEndWidgetOptions"`);
     }
 
     /**
+     * @param {Object} options Additional options to configure the widget
      * @returns {FrontEndWidgetOptions} Options for the sp1 widget
      */
-    sp1FrontEndWidgetOptions = () => {
+    sp1FrontEndWidgetOptions = (options = {}) => {
         throw new Error(`Unimplemented method "sp1FrontEndWidgetOptions"`);
     }
 
     /**
+     * @param {Object} options Additional options to configure the widget
      * @returns {FrontEndWidgetOptions} Options for the i1 widget
      */
-    i1FrontEndWidgetOptions = () => {
+    i1FrontEndWidgetOptions = (options = {}) => {
         throw new Error(`Unimplemented method "i1FrontEndWidgetOptions"`);
     }
 }
