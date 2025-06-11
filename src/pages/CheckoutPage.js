@@ -48,7 +48,6 @@ export default class CheckoutPage extends Page {
      * Navigate to the page
      * 
      * @param {Object} options Additional options
-     * @params {string} options.slug The product slug
      * @returns {Promise<void>}
      */
     async goto(options = {}) {
