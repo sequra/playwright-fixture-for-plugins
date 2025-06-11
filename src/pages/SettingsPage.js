@@ -37,6 +37,7 @@ export default class SettingsPage extends Page {
             dropdownButton: (parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button'),
             dropdownListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
             dropdownSelectedListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
+            dropdownListVisible: () => this.page.locator('.sqp-dropdown-list.sqs--show'),
             multiSelect: (parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector'),
             toggle: (parentLocator, locate = 'input') => parentLocator.locator(locate === 'label' ? '.sq-toggle' : '.sqp-toggle-input'),
             selectedItem: (locator, hasText = '') => {
@@ -189,7 +190,9 @@ export default class SettingsPage extends Page {
      * @param {import('@playwright/test').Locator} locator Dropdown locator
      */
     async closeDropdownList(locator) {
+        await this.locators.dropdownListVisible().waitFor({ state: 'visible', timeout: 5000 });
         // Do click out of the dropdown list to close it
         await locator.click({ force: true, position: { x: 0, y: -20 } });
+        await this.locators.dropdownListVisible().waitFor({ state: 'detached', timeout: 1000 });
     }
 }

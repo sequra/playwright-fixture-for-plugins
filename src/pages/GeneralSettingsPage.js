@@ -29,7 +29,6 @@ export default class GeneralSettingsPage extends SettingsPage {
             allowedIPAddressesHiddenInput: () => this.page.locator('[name="allowedIPAddresses-selector"]'),
             countriesMultiSelect: () => this.page.locator('.sq-multi-item-selector:has([name="countries-selector"])'),
             countriesSelect: () => this.page.locator('[name="countries-selector"]'),
-            dropdownListVisible: () => this.page.locator('.sqp-dropdown-list.sqs--show'),
             excludedProducts: () => this.page.locator('.sq-field-wrapper').filter({ hasText: 'Excluded products' }).first().locator('.sq-label-wrapper + div').first(),
             excludedProductsMultiInput: () => this.locators.excludedProducts().locator('.sq-multi-input'),
             excludedProductsHiddenInput: () => this.locators.excludedProducts().locator('.sqp-hidden-input'),
