@@ -40,6 +40,10 @@ export default class SettingsPage extends Page {
             dropdownListVisible: () => this.page.locator('.sqp-dropdown-list.sqs--show'),
             multiSelect: (parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector'),
             toggle: (parentLocator, locate = 'input') => parentLocator.locator(locate === 'label' ? '.sq-toggle' : '.sqp-toggle-input'),
+            radio: (value, locate = 'input', parentLocator = null) => {
+                const parent = parentLocator ? parentLocator : this.page;
+                return parent.locator(`.sq-radio-input [type="radio"][value="${value}"]` + (locate === 'label' ? ' + span' : ''))
+            },
             selectedItem: (locator, hasText = '') => {
                 const loc = locator.locator('.sqp-selected-item');
                 return hasText ? loc.filter({ hasText }) : loc;
