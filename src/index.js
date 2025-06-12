@@ -13,3 +13,4 @@ export { default as GeneralSettingsPage } from './pages/GeneralSettingsPage.js';
 export { default as ConnectionSettingsPage } from './pages/ConnectionSettingsPage.js';
 export { default as WidgetSettingsPage } from './pages/WidgetSettingsPage.js';
 export { default as CartPage } from './pages/CartPage.js';
+export { default as CategoryPage } from './pages/CategoryPage.js';
