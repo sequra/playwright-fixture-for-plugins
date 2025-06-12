@@ -7,17 +7,6 @@ import PageWithWidgets from "./PageWithWidgets.js";
 export default class CategoryPage extends PageWithWidgets {
 
     /**
-    * Init the locators with the locators available
-    * 
-    * @returns {Object}
-    */
-    initLocators() {
-        return {
-            ...super.initLocators(),
-        };
-    }
-
-    /**
      * Navigate to the page
      * 
      * @param {Object} options Additional options

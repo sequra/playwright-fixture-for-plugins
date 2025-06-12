@@ -50,6 +50,13 @@ export default class PageWithWidgets extends Page {
              * @returns {import('@playwright/test').Locator}
              */
             widgetIframe: opt => this.locators.widget(opt).locator('iframe.Sequra__PromotionalWidget'),
+            /**
+             * Locator for the mini widget based on the provided options
+             * @param {string} product Product name, e.g. 'pp3', 'sp1', etc.
+             * @param {Object} options Additional options for the locator
+             * @returns {import('@playwright/test').Locator} 
+             */
+            miniWidget: (product, options = null) => this.page.locator(`.sequra-educational-popup.sequra-promotion-miniwidget[data-product="${product}"]`, options),
         };
     }
 
@@ -76,5 +83,25 @@ export default class PageWithWidgets extends Page {
      */
     async expectWidgetNotToBeVisible(options) {
         await this.expect(this.locators.widget(options)).toHaveCount(0);
+    }
+
+    /**
+     * Expect any visible mini widget
+     * 
+     * @param {string} product Product name, e.g. 'pp3', 'sp1', etc.
+     * @param {Object} options Additional options for the locator
+     */
+    async expectAnyVisibleMiniWidget(product, options = null) {
+        await this.locators.miniWidget(product, options).first().waitFor({ state: 'visible' });
+    }
+
+    /**
+     * Expect the mini widgets not to be visible
+     * 
+     * @param {string} product Product name, e.g. 'pp3', 'sp1', etc.
+     * @param {Object} options Additional options for the locator
+     */
+    async expectMiniWidgetsNotToBeVisible(product, options = null) {
+        await this.locators.miniWidget(product, options).toHaveCount(0);
     }
 }
