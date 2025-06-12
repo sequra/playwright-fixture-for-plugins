@@ -45,7 +45,7 @@ export default class DataProvider extends Fixture {
             case 'dummy_automated_tests':
                 return [
                     { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
-                    { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
+                    // { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
                     { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
                     { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
                 ];

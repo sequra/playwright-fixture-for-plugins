@@ -37,6 +37,7 @@ export default class SettingsPage extends Page {
             dropdownButton: (parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button'),
             dropdownListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
             dropdownSelectedListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
+            multiSelectSelectedListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector > .sqp-selected-item', { hasText: text }),
             dropdownListVisible: () => this.page.locator('.sqp-dropdown-list.sqs--show'),
             multiSelect: (parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector'),
             toggle: (parentLocator, locate = 'input') => parentLocator.locator(locate === 'label' ? '.sq-toggle' : '.sqp-toggle-input'),
