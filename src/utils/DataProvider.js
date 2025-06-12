@@ -26,7 +26,7 @@ export default class DataProvider extends Fixture {
             case 'dummy_automated_tests':
                 return [
                     { name: 'Spain', paymentMethods: ['Paga Después', 'Divide tu pago en 3', 'Paga Fraccionado'] },
-                    { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
+                    // { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
                     { name: 'Italy', paymentMethods: ['Pagamento a rate'] },
                     { name: 'Portugal', paymentMethods: ['Pagamento Fracionado'] }
                 ];
