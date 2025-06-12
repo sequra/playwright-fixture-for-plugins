@@ -102,6 +102,6 @@ export default class PageWithWidgets extends Page {
      * @param {Object} options Additional options for the locator
      */
     async expectMiniWidgetsNotToBeVisible(product, options = null) {
-        await this.locators.miniWidget(product, options).toHaveCount(0);
+        await this.expect(this.locators.miniWidget(product, options)).toHaveCount(0);
     }
 }
