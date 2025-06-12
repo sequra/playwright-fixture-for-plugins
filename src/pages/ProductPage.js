@@ -1,9 +1,10 @@
-import Page from "./Page.js";
+import PageWithWidgets from "./PageWithWidgets.js";
+/** @typedef {import('../utils/types.js').FrontEndWidgetOptions} FrontEndWidgetOptions */
 
 /**
  * Product page
  */
-export default class ProductPage extends Page {
+export default class ProductPage extends PageWithWidgets {
 
     /**
     * Init the locators with the locators available
@@ -12,8 +13,9 @@ export default class ProductPage extends Page {
     */
     initLocators() {
         return {
+            ...super.initLocators(),
             qtyInput: opt => this.qtyLocator(opt),
-            addToCartButton: opt => this.addToCartLocator(opt),
+            addToCartButton: opt => this.addToCartLocator(opt)
         };
     }
 
@@ -25,7 +27,13 @@ export default class ProductPage extends Page {
      * @returns {Promise<void>}
      */
     async goto(options = {}) {
-        await this.page.goto(this.productUrl(options), { waitUntil: 'domcontentloaded' });
+        const url = this.productUrl(options);
+        if (this.page.url() === url) {
+            // Do not reload the page if we are already on the product page
+            return;
+        }
+
+        await this.page.goto(url, { waitUntil: 'domcontentloaded' });
     }
 
     /**

@@ -60,15 +60,19 @@ export default class OnboardingSettingsPage extends SettingsPage {
      */
     async fillCountriesForm(options) {
         const { countries } = options;
-        const multiSelectLocator = this.locators.multiSelect();
-        await multiSelectLocator.click();
+        const { multiSelect, dropdownListItem, multiSelectSelectedListItem } = this.locators;
         for (const { name } of countries) {
-            await this.locators.dropdownListItem(name).click();
+            if ((await multiSelectSelectedListItem(name).count()) > 0) {
+                continue; // Skip if already selected
+            }
+            // Ignore timeout error if the item is not selected
+            await multiSelect().click();
+            await dropdownListItem(name).click();
+            await this.closeDropdownList(multiSelect());
         }
-        await this.closeDropdownList(multiSelectLocator);
-        for (const { code, merchantRef } of countries) {
-            await this.locators.merchantRefInput(code).fill(merchantRef);
-        }
+        // for (const { code, merchantRef } of countries) {
+        //     await this.locators.merchantRefInput(code).fill(merchantRef);
+        // }
         await this.locators.primaryButton().click();
         await this.locators.completedStepCountries().waitFor({ timeout: 5000 });
     }

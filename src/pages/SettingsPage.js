@@ -34,17 +34,52 @@ export default class SettingsPage extends Page {
             cancelButton: () => this.page.locator('.sq-button.sqp-cancel:not([disabled])'),
             inputError: () => this.page.locator('.sqp-input-error'),
             selectedOption: text => this.page.locator('span.sqs--selected', { hasText: text }),
-            dropdownButton: () => this.page.locator('.sqp-dropdown-button'),
-            dropdownListItem: text => this.page.locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
-            dropdownSelectedListItem: text => this.page.locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
-            multiSelect: () => this.page.locator('.sq-multi-item-selector'),
+            dropdownButton: (parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button'),
+            dropdownListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button + .sqp-dropdown-list .sqp-dropdown-list-item', { hasText: text }),
+            dropdownSelectedListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button > .sqs--selected', { hasText: text }),
+            multiSelectSelectedListItem: (text, parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector > .sqp-selected-item', { hasText: text }),
+            dropdownListVisible: () => this.page.locator('.sqp-dropdown-list.sqs--show'),
+            multiSelect: (parentLocator = null) => (parentLocator ?? this.page).locator('.sq-multi-item-selector'),
             toggle: (parentLocator, locate = 'input') => parentLocator.locator(locate === 'label' ? '.sq-toggle' : '.sqp-toggle-input'),
+            radio: (value, locate = 'input', parentLocator = null) => {
+                const parent = parentLocator ? parentLocator : this.page;
+                return parent.locator(`.sq-radio-input [type="radio"][value="${value}"]` + (locate === 'label' ? ' + span' : ''))
+            },
             selectedItem: (locator, hasText = '') => {
                 const loc = locator.locator('.sqp-selected-item');
                 return hasText ? loc.filter({ hasText }) : loc;
             },
             selectedItemRemoveButton: (locator, hasText = '') => this.locators.selectedItem(locator, hasText).locator('.sqp-remove-button'),
+            detailsSummary: details => details.locator('summary'),
+            detailsRemoveBtn: details => details.locator('.sq-remove'),
         };
+    }
+
+    /**
+     * Open the details of a section
+     * @param {import('@playwright/test').Locator} details Locator for the details section
+     * @returns {Promise<void>}
+     */
+    async openDetails(details) {
+        try {
+            await this.expect(this.locators.detailsRemoveBtn(details)).toBeHidden({ timeout: 1 });
+            const summary = this.locators.detailsSummary(details);
+            const box = await summary.boundingBox();
+            await summary.click({ position: { x: box.width - 8, y: box.height / 2 } }); // click on the expand button.
+        } catch {
+        }
+    }
+
+    /**
+     * Remove all details from the page using a locator function
+     * @param {function} detailsLocatorFn Must return a Locator to the details and receive no parameters
+     */
+    async removeAllDetails(detailsLocatorFn) {
+        while ((await detailsLocatorFn().count()) > 0) {
+            const details = detailsLocatorFn().last();
+            await this.openDetails(details);
+            await this.locators.detailsRemoveBtn(details).click();
+        }
     }
 
     /**
@@ -110,7 +145,9 @@ export default class SettingsPage extends Page {
      */
     async expectErrorMessageToBeVisible() {
         const opt = { timeout: 100 };
-        await this.expect(this.locators.inputError()).toBeVisible(opt);
+        // expect at least one error message to be visible
+        this.expect((await this.locators.inputError().filter({ visible: true }).count())).toBeTruthy();
+
         await this.expect(this.locators.saveButton()).toHaveCount(0, opt);
         await this.expect(this.locators.cancelButton()).toHaveCount(0, opt);
     }
@@ -120,19 +157,23 @@ export default class SettingsPage extends Page {
      * @param {import('@playwright/test').Locator} locator 
      * @param {string} fieldName 
      * @param {boolean} value 
+     * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
      */
-    async expectToBeChecked(locator, fieldName, value) {
-        await this.expect(locator, `${fieldName} should be ${value ? 'ON' : 'OFF'}`).toBeChecked({ checked: value });
+    async expectToBeChecked(locator, fieldName, value, timeout = null) {
+        const options = timeout !== null ? { checked: value, timeout: timeout } : { checked: value };
+        await this.expect(locator, `${fieldName} should be ${value ? 'ON' : 'OFF'}`).toBeChecked(options);
     }
 
     /**
      * Expect the locator to be visible
      * @param {import('@playwright/test').Locator} locator 
      * @param {string} fieldName 
-     * @param {boolean} value 
+     * @param {boolean} value
+     * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
      */
-    async expectToBeVisible(locator, fieldName, value) {
-        await this.expect(locator, `${fieldName} should be ${value ? 'visible' : 'hidden'}`).toBeVisible({ visible: value });
+    async expectToBeVisible(locator, fieldName, value, timeout = null) {
+        const options = timeout !== null ? { visible: value, timeout: timeout } : { visible: value };
+        await this.expect(locator, `${fieldName} should be ${value ? 'visible' : 'hidden'}`).toBeVisible(options);
     }
 
     /**
@@ -141,11 +182,12 @@ export default class SettingsPage extends Page {
      * @param {boolean} options.enabled
      * @param {function} locator Must return a locator and receive an optional parameter locate with the value 'label' or 'input'
      * @param {*} fieldName The name of the field
+     * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
      */
-    async setToggle(options, locator, fieldName) {
+    async setToggle(options, locator, fieldName, timeout = null) {
         const { enabled } = options;
-        await this.expectToBeChecked(locator(), `"${fieldName}" toggle`, !enabled);
-        await locator('label').click();
+        await this.expectToBeChecked(locator(), `"${fieldName}" toggle`, !enabled, timeout);
+        await locator('label').click({ timeout: 0 });
     }
 
     /**
@@ -153,7 +195,9 @@ export default class SettingsPage extends Page {
      * @param {import('@playwright/test').Locator} locator Dropdown locator
      */
     async closeDropdownList(locator) {
+        await this.locators.dropdownListVisible().waitFor({ state: 'visible', timeout: 5000 });
         // Do click out of the dropdown list to close it
         await locator.click({ force: true, position: { x: 0, y: -20 } });
+        await this.locators.dropdownListVisible().waitFor({ state: 'detached', timeout: 1000 });
     }
 }

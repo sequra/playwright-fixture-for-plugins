@@ -45,7 +45,7 @@ export default class SeQuraHelper extends Fixture {
      */
     getWebhookUrlArgs(args = []) {
         const $args = args.map(({ name, value }) => `${name}=${encodeURIComponent(value)}`);
-        return $args.length ? `?${$args.join('&')}` : '';
+        return $args.length ? `&${$args.join('&')}` : '';
     }
 
     /**

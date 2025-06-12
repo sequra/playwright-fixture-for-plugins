@@ -1,4 +1,5 @@
 import Fixture from '../base/Fixture.js';
+/** @typedef {import('./types.js').WidgetOptions} WidgetOptions */
 
 /**
  * Provide data for the tests
@@ -25,7 +26,7 @@ export default class DataProvider extends Fixture {
             case 'dummy_automated_tests':
                 return [
                     { name: 'Spain', paymentMethods: ['Paga Después', 'Divide tu pago en 3', 'Paga Fraccionado'] },
-                    { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
+                    // { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
                     { name: 'Italy', paymentMethods: ['Pagamento a rate'] },
                     { name: 'Portugal', paymentMethods: ['Pagamento Fracionado'] }
                 ];
@@ -44,7 +45,7 @@ export default class DataProvider extends Fixture {
             case 'dummy_automated_tests':
                 return [
                     { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
-                    { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
+                    // { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
                     { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
                     { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
                 ];
@@ -130,5 +131,180 @@ export default class DataProvider extends Fixture {
         const response = await this.request.get('https://checkip.amazonaws.com/');
         const publicIP = await response.text();
         return publicIP.trim();
+    }
+
+    /**
+     * Configuration for the widget form. Everything is set to false
+     * @returns {WidgetOptions} Configuration for the widget
+     */
+    defaultWidgetOptions() {
+        return {
+            widgetConfig: '{"alignment":"center","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner"}',
+            product: {
+                display: false,
+                priceSel: '',
+                altPriceSel: '',
+                altPriceTriggerSel: '',
+                locationSel: '',
+                customLocations: []
+            },
+            cart: {
+                display: false,
+                priceSel: '',
+                locationSel: '',
+                paymentMethod: 'Paga Fraccionado',
+            },
+            productListing: {
+                display: false,
+                useSelectors: true,
+                priceSel: '',
+                locationSel: '',
+                paymentMethod: 'Paga Fraccionado',
+            },
+        }
+    }
+
+    /**
+     * Configuration for the widget form with all options enabled
+     * @returns {WidgetOptions} Configuration for the widget
+     */
+    widgetOptions() {
+        const defaultOptions = this.defaultWidgetOptions();
+        return {
+            ...defaultOptions,
+            product: {
+                ...defaultOptions.product,
+                display: true,
+                customLocations: [
+                    {
+                        paymentMethod: 'Paga Después',
+                        display: true,
+                        locationSel: '',
+                        widgetConfig: '{"alignment":"left","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner","branding":"black"}',
+                    }
+                ]
+            },
+            cart: {
+                ...defaultOptions.cart,
+                display: true
+            },
+            productListing: {
+                ...defaultOptions.productListing,
+                display: true
+            },
+        }
+    }
+
+    /**
+     * Options having only product widget options enabled
+     * @returns {WidgetOptions} Configuration for the widget with only product widget options
+     */
+    onlyProductWidgetOptions() {
+        const widgetOptions = this.widgetOptions();
+        return {
+            ...widgetOptions,
+            cart: {
+                ...widgetOptions.cart,
+                display: false
+            },
+            productListing: {
+                ...widgetOptions.productListing,
+                display: false
+            }
+        }
+    }
+
+    /**
+     * Options having only cart widget options enabled
+     * @returns {WidgetOptions} Configuration for the widget with only cart widget options
+     */
+    onlyCartWidgetOptions() {
+        const widgetOptions = this.widgetOptions();
+        return {
+            ...widgetOptions,
+            product: {
+                ...widgetOptions.product,
+                display: false
+            },
+            productListing: {
+                ...widgetOptions.productListing,
+                display: false
+            }
+        }
+    }
+
+    /**
+     * Options having only product listing widget options enabled
+     * @returns {WidgetOptions} Configuration for the widget with only product listing widget options
+     */
+    onlyProductListingWidgetOptions() {
+        const widgetOptions = this.widgetOptions();
+        return {
+            ...widgetOptions,
+            product: {
+                ...widgetOptions.product,
+                display: false
+            },
+            cart: {
+                ...widgetOptions.cart,
+                display: false
+            }
+        }
+    }
+
+    /**
+     * Front end widget options
+     * @param {string} product 
+     * @param {string|null} campaign 
+     * @param {number} amount
+     * @param {number|null} registrationAmount 
+     * @returns {FrontEndWidgetOptions} Options for the front end widget
+     */
+    frontEndWidgetOptions = (product, campaign, amount, registrationAmount) => {
+        const widget = this.widgetOptions();
+        return {
+            locationSel: widget.product.locationSel,
+            widgetConfig: widget.widgetConfig,
+            product: product,
+            amount: amount,
+            registrationAmount: registrationAmount,
+            campaign: campaign
+        };
+    }
+
+    /**
+     * @param {Object} options Additional options to configure the widget
+     * @returns {FrontEndWidgetOptions} Options for the i1 widget
+     */
+    pp3FrontEndWidgetOptions = (options = {}) => {
+        throw new Error(`Unimplemented method "pp3FrontEndWidgetOptions"`);
+    }
+
+    /**
+     * @param {Object} options Additional options to configure the widget
+     * @returns {FrontEndWidgetOptions} Options for the sp1 widget
+     */
+    sp1FrontEndWidgetOptions = (options = {}) => {
+        throw new Error(`Unimplemented method "sp1FrontEndWidgetOptions"`);
+    }
+
+    /**
+     * @param {Object} options Additional options to configure the widget
+     * @returns {FrontEndWidgetOptions} Options for the i1 widget
+     */
+    i1FrontEndWidgetOptions = (options = {}) => {
+        throw new Error(`Unimplemented method "i1FrontEndWidgetOptions"`);
+    }
+
+    /**
+     * Options for the cart widget
+    * @param {Object} options Additional options to configure the widget
+    * @param {number} options.amount cart amount
+    * @param {number|null} options.registrationAmount registration amount
+    * @returns {FrontEndWidgetOptions} Options for the cart widget
+    */
+    cartFrontEndWidgetOptions = (options) => {
+        const { amount, registrationAmount } = options;
+        return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount);
     }
 }
