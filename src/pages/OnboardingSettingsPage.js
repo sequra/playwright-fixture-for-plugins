@@ -46,7 +46,6 @@ export default class OnboardingSettingsPage extends SettingsPage {
         await this.connectionSettingsPage.fillForm(options);
         // TODO: expect that the send statistical data checkbox is checked by default
         // await this.expect(this.locators.sendStatisticsCheckbox()).toBeChecked();
-        await this.locators.yesOption().click();
         await this.locators.primaryButton().click();
         await this.locators.completedStepConnect().waitFor({ timeout: 5000 });
     }
