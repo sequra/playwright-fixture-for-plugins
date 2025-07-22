@@ -1,3 +1,4 @@
+import ConnectionSettingsPage from './ConnectionSettingsPage.js';
 import SettingsPage from './SettingsPage.js';
 
 export default class OnboardingSettingsPage extends SettingsPage {
@@ -13,6 +14,7 @@ export default class OnboardingSettingsPage extends SettingsPage {
     */
     constructor(page, baseURL, expect, request, backOffice, helper) {
         super(page, baseURL, expect, request, backOffice, helper, 'onboarding-connect');
+        this.connectionSettingsPage = new ConnectionSettingsPage(page, baseURL, expect, request, backOffice, helper);
     }
 
     /**
@@ -23,15 +25,13 @@ export default class OnboardingSettingsPage extends SettingsPage {
     initLocators() {
         return {
             ...super.initLocators(),
-            sandboxOption: () => this.page.locator('label:has([value="sandbox"])'),
-            username: () => this.page.locator('[name="username-input"]'),
-            password: () => this.page.locator('[name="password-input"]'),
             completedStepConnect: () => this.page.locator('.sqp-step.sqs--completed[href="#onboarding-connect"]'),
             completedStepCountries: () => this.page.locator('.sqp-step.sqs--completed[href="#onboarding-countries"]'),
             completedStepDeploymentTargets: () => this.page.locator('.sqp-step.sqs--completed[href="#onboarding-deployments"]'),
             merchantRefInput: countryCode => this.page.locator(`[name="country_${countryCode}"]`),
             yesOption: () => this.page.locator('.sq-radio-input:has([type="radio"][value="true"])'),
             assetsKey: () => this.page.locator('[name="assets-key-input"]'),
+            sendStatisticsCheckbox: () => this.page.locator('.sq-statistics input.sqp-checkbox-input'),
             headerNavbar: () => this.page.locator('.sqp-header-top > .sqp-menu-items'),
         };
     }
@@ -39,14 +39,13 @@ export default class OnboardingSettingsPage extends SettingsPage {
     /**
      * Fill the connect form
      * @param {Object} options 
-     * @param {string} options.username The username to use
-     * @param {string} options.password The password to use
+     * @param {import('../utils/types.js').DeploymentTargetCredentials[]} options.credentials The credentials to use
      */
     async fillConnectForm(options) {
-        const { username, password } = options;
-        await this.locators.sandboxOption().click();
-        await this.locators.username().fill(username);
-        await this.locators.password().fill(password);
+        await this.connectionSettingsPage.fillForm(options);
+        // TODO: expect that the send statistical data checkbox is checked by default
+        // await this.expect(this.locators.sendStatisticsCheckbox()).toBeChecked();
+        await this.locators.yesOption().click();
         await this.locators.primaryButton().click();
         await this.locators.completedStepConnect().waitFor({ timeout: 5000 });
     }

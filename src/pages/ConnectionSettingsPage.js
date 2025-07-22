@@ -31,7 +31,8 @@ export default class ConnectionSettingsPage extends SettingsPage {
             },
             username: () => this.page.locator('[name="username-input"]'),
             password: () => this.page.locator('[name="password-input"]'),
-            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' })
+            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' }),
+            deploymentTargetTab: text => this.page.locator('.sqp-menu-items-deployments .sqp-menu-item', { hasText: text }),
         };
     }
 
@@ -48,16 +49,19 @@ export default class ConnectionSettingsPage extends SettingsPage {
 
     /**
      * Fill the connect form
-     * @param {Object} options 
-     * @param {string} options.username The username to use
-     * @param {string} options.password The password to use
+     * @param {Object} options
+     * @param {import('../utils/types.js').DeploymentTargetCredentials[]} options.credentials The credentials to use
      * @param {string} options.env The environment to use
      */
     async fillForm(options) {
-        const { envOption, username, password } = this.locators;
+        const { envOption, deploymentTargetTab, username, password } = this.locators;
         await envOption('label', options.env).click();
-        await username().fill(options.username);
-        await password().fill(options.password);
+
+        for (const credential of options.credentials) {
+            await deploymentTargetTab(credential.name).click();
+            await username().fill(credential.username);
+            await password().fill(credential.password);
+        }
     }
 
     /**
