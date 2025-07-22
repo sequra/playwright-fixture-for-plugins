@@ -40,6 +40,7 @@ export default class OnboardingSettingsPage extends SettingsPage {
      * Fill the connect form
      * @param {Object} options 
      * @param {import('../utils/types.js').DeploymentTargetCredentials[]} options.credentials The credentials to use
+     * @param {string} options.env The environment to use
      */
     async fillConnectForm(options) {
         await this.connectionSettingsPage.fillForm(options);
