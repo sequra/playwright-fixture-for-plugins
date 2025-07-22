@@ -1,5 +1,6 @@
 import Fixture from '../base/Fixture.js';
 /** @typedef {import('./types.js').WidgetOptions} WidgetOptions */
+/** @typedef {import('./types.js').DeploymentTargetOptions} DeploymentTargetOptions */
 
 /**
  * Provide data for the tests
@@ -306,5 +307,16 @@ export default class DataProvider extends Fixture {
     cartFrontEndWidgetOptions = (options) => {
         const { amount, registrationAmount } = options;
         return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount);
+    }
+
+    /**
+     * Options for the deployment targets
+     * @returns {Array<DeploymentTargetOptions>} Options for the deployment targets
+     */
+    deploymentTargetsOptions() {
+        return [
+            { name: 'seQura' },
+            { name: 'SVEA' }
+        ];
     }
 }

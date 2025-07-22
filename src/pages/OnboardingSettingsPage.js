@@ -28,6 +28,7 @@ export default class OnboardingSettingsPage extends SettingsPage {
             password: () => this.page.locator('[name="password-input"]'),
             completedStepConnect: () => this.page.locator('.sqp-step.sqs--completed[href="#onboarding-connect"]'),
             completedStepCountries: () => this.page.locator('.sqp-step.sqs--completed[href="#onboarding-countries"]'),
+            completedStepDeploymentTargets: () => this.page.locator('.sqp-step.sqs--completed[href="#onboarding-deployments"]'),
             merchantRefInput: countryCode => this.page.locator(`[name="country_${countryCode}"]`),
             yesOption: () => this.page.locator('.sq-radio-input:has([type="radio"][value="true"])'),
             assetsKey: () => this.page.locator('[name="assets-key-input"]'),
@@ -70,9 +71,6 @@ export default class OnboardingSettingsPage extends SettingsPage {
             await dropdownListItem(name).click();
             await this.closeDropdownList(multiSelect());
         }
-        // for (const { code, merchantRef } of countries) {
-        //     await this.locators.merchantRefInput(code).fill(merchantRef);
-        // }
         await this.locators.primaryButton().click();
         await this.locators.completedStepCountries().waitFor({ timeout: 5000 });
     }
@@ -89,5 +87,27 @@ export default class OnboardingSettingsPage extends SettingsPage {
         await this.locators.primaryButton().click();
         await this.locators.primaryButton().click();
         await this.locators.headerNavbar().waitFor({ timeout: 5000 });
+    }
+
+    /**
+     * Fill deployment targets form
+     * @param {Object} options
+     * @param {Array<Object>} options.deploymentTargets The deployment targets to select
+     * @param {string} options.deploymentTargets[].name The country name
+     */
+    async fillDeploymentTargetsForm(options) {
+        const { deploymentTargets } = options;
+        const { multiSelect, dropdownListItem, multiSelectSelectedListItem } = this.locators;
+        for (const { name } of deploymentTargets) {
+            if ((await multiSelectSelectedListItem(name).count()) > 0) {
+                continue; // Skip if already selected
+            }
+            // Ignore timeout error if the item is not selected
+            await multiSelect().click();
+            await dropdownListItem(name).click();
+            await this.closeDropdownList(multiSelect());
+        }
+        await this.locators.primaryButton().click();
+        await this.locators.completedStepDeploymentTargets().waitFor({ timeout: 5000 });
     }
 }
