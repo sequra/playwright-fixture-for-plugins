@@ -32,7 +32,11 @@ export default class ConnectionSettingsPage extends SettingsPage {
             username: () => this.page.locator('[name="username-input"]'),
             password: () => this.page.locator('[name="password-input"]'),
             credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' }),
-            deploymentTargetTab: text => this.page.locator('.sqp-menu-items-deployments .sqp-menu-item', { hasText: text }),
+            deploymentTargetTab: (text = null) => {
+                const selector = `.sqp-menu-items-deployments .sqp-menu-item`;
+                return !text ? this.page.locator(selector) : this.page.locator(selector, { hasText: text });
+            },
+            manageDeploymentTargetsButton: () => this.page.locator('.sqm--deployment .sq-button'),
         };
     }
 
@@ -41,10 +45,59 @@ export default class ConnectionSettingsPage extends SettingsPage {
         await this.locators.modalConfirmButton().click();
     }
 
-    async disconnect() {
-        await this.locators.disconnect().click();
+    /**
+     * Disconnect from a deployment target
+     * @param {Object} options
+     * @param {import('../utils/types.js').DeploymentTargetCredentials} options.credential The credentials to test with
+     */
+    async disconnect(options) {
+        const { credential } = options;
+        const { disconnect, deploymentTargetTab } = this.locators;
+
+        await deploymentTargetTab(credential.name).click();
+        await disconnect().click();
         await this.confirmModal();
-        await this.page.waitForURL(/#onboarding-connect/);
+        await this.expectLoadingShowAndHide();
+    }
+
+    /**
+     * Fill the manage deployment targets form
+     * @param {Object} options
+     * @param {import('../utils/types.js').DeploymentTargetCredentials} options.credential The credentials to test with
+     * @param {boolean} options.save Whether to save the changes or cancel them
+     */
+    async fillManageDeploymentTargetsForm(options) {
+        const { credential, save } = options;
+        const { username, password, manageDeploymentTargetsButton, deploymentTargetTab } = this.locators;
+        await manageDeploymentTargetsButton().click();
+        await deploymentTargetTab(credential.name).click();
+        await username().fill(credential.username);
+        await password().fill(credential.password);
+
+        if (save) {
+            await this.locators.primaryButton().click();
+            await this.expectLoadingShowAndHide();
+            // Check if the values were saved correctly
+            await deploymentTargetTab(credential.name).click();
+            await this.expect(username()).toHaveValue(credential.username, `Username should be "${credential.username}"`);
+            await this.expect(password()).toHaveValue(credential.password, `Password should be "${credential.password}"`);
+        } else {
+            await this.locators.secondaryButton().click();
+            await this.expect(deploymentTargetTab(credential.name)).toHaveCount(0, `Deployment target ${credential.name} should not be visible after canceling`);
+        }
+    }
+
+    /**
+     * Disconnect the remaining deployment targets
+     */
+    async disconnectAll() {
+        const { disconnect } = this.locators;
+        while ((await disconnect().count()) > 0) {
+            await disconnect().click();
+            await this.confirmModal();
+            await this.expectLoadingShowAndHide();
+        }
+        await this.page.waitForURL(/#onboarding-deployments/);
     }
 
     /**

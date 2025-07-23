@@ -32,6 +32,7 @@ export default class SettingsPage extends Page {
             primaryButton: () => this.page.locator('.sq-button.sqt--primary'),
             saveButton: () => this.page.locator('.sq-button.sqp-save:not([disabled])'),
             cancelButton: () => this.page.locator('.sq-button.sqp-cancel:not([disabled])'),
+            secondaryButton: () => this.page.locator('.sq-button.sqt--secondary:not([disabled])'),
             inputError: () => this.page.locator('.sqp-input-error'),
             selectedOption: text => this.page.locator('span.sqs--selected', { hasText: text }),
             dropdownButton: (parentLocator = null) => (parentLocator ?? this.page).locator('.sqp-dropdown-button'),
