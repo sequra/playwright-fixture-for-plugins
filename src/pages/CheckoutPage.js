@@ -1,4 +1,6 @@
 import BackOffice from "../base/BackOffice.js";
+import DataProvider from "../utils/DataProvider.js";
+import SeQuraHelper from "../utils/SeQuraHelper.js";
 import Page from "./Page.js";
 
 /**
@@ -331,15 +333,36 @@ export default class CheckoutPage extends Page {
         throw new Error('Not implemented');
     }
 
-     /**
-     * Test if the "+ info" link is working properly
-     * @param {Object} options
-     * @param {string} options.product seQura product (i1, pp3, etc)
-     * @param {string} options.campaign Campaign name
-     * @returns {Promise<void>}
-     */
-     async openAndCloseEducationalPopup(options) {  
+    /**
+    * Test if the "+ info" link is working properly
+    * @param {Object} options
+    * @param {string} options.product seQura product (i1, pp3, etc)
+    * @param {string} options.campaign Campaign name
+    * @returns {Promise<void>}
+    */
+    async openAndCloseEducationalPopup(options) {
         await this.locators.moreInfoLink(options).click();
         await this.locators.moreInfoCloseBtn().click();
+    }
+
+    /**
+     * Verifies if the placed order has the merchant ID defined for the address country
+     * This requires the 'verify_order_has_merchant_id' webhook to be implemented
+     * 
+     * @param {string} country The country code
+     * @param {SeQuraHelper} helper The back office helper instance
+     * @param {DataProvider} dataProvider The data provider instance
+     * @param {Object} options Additional options if needed
+     * @returns {Promise<void>}
+     */
+    async expectOrderHasTheCorrectMerchantId(country, helper, dataProvider, options = {}) {
+        const merchantId = dataProvider.countriesMerchantRefs().filter(c => c.code === country)[0].merchantRef;
+        const orderNumber = await this.getOrderNumber();
+        await helper.executeWebhook({
+            webhook: helper.webhooks.verify_order_has_merchant_id, args: [
+                { name: 'order_id', value: orderNumber },
+                { name: 'merchant_id', value: merchantId }
+            ]
+        });
     }
 }
