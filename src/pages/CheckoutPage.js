@@ -38,6 +38,8 @@ export default class CheckoutPage extends Page {
             sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
+            monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
+            monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
             moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
             moreInfoLink: options => this.moreInfoLinkLocator(options)
@@ -208,7 +210,22 @@ export default class CheckoutPage extends Page {
     }
 
     async fillPp3CheckoutForm(options) {
-        throw new Error('Not implemented');
+        const { dateOfBirth, nin } = options;
+        await this.locators.sqIframeI1Locator().waitFor({ state: 'attached', timeout: 10000 });
+        const iframe = this.locators.sqIframeI1();
+        await this.locators.sqIframeBtn(iframe).click(); // Click to proceed with the selected payment plan
+        // First name, last name, and mobile phone came already filled.
+        await this.locators.sqDateOfBirth(iframe).click();
+        await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
+        await this.locators.sqNin(iframe).click();
+        await this.locators.sqNin(iframe).pressSequentially(nin);
+        // Select Monthly income and Fixed monthly fees
+        await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
+        await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+
+        await this.locators.sqAcceptPrivacyPolicy(iframe).click();
+        await this.locators.sqIframeBtn(iframe).click();
+        await this.fillOtp(iframe, options);
     }
 
     async fillSp1CheckoutForm(options) {
