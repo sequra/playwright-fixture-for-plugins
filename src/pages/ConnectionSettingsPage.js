@@ -31,6 +31,8 @@ export default class ConnectionSettingsPage extends SettingsPage {
             },
             username: () => this.page.locator('[name="username-input"]'),
             password: () => this.page.locator('[name="password-input"]'),
+            newUsername: () => this.page.locator('[name="new-username-input"]'),
+            newPassword: () => this.page.locator('[name="new-password-input"]'),
             credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' }),
             deploymentTargetTab: (text = null) => {
                 const selector = `.sqp-menu-items-deployments .sqp-menu-item`;
@@ -68,19 +70,19 @@ export default class ConnectionSettingsPage extends SettingsPage {
      */
     async fillManageDeploymentTargetsForm(options) {
         const { credential, save } = options;
-        const { username, password, manageDeploymentTargetsButton, deploymentTargetTab } = this.locators;
+        const { newUsername, newPassword, manageDeploymentTargetsButton, deploymentTargetTab } = this.locators;
         await manageDeploymentTargetsButton().click();
         await deploymentTargetTab(credential.name).click();
-        await username().fill(credential.username);
-        await password().fill(credential.password);
+        await newUsername().fill(credential.username);
+        await newPassword().fill(credential.password);
 
         if (save) {
             await this.locators.primaryButton().click();
             await this.expectLoadingShowAndHide();
             // Check if the values were saved correctly
             await deploymentTargetTab(credential.name).click();
-            await this.expect(username()).toHaveValue(credential.username, `Username should be "${credential.username}"`);
-            await this.expect(password()).toHaveValue(credential.password, `Password should be "${credential.password}"`);
+            await this.expect(newUsername()).toHaveValue(credential.username, `Username should be "${credential.username}"`);
+            await this.expect(newPassword()).toHaveValue(credential.password, `Password should be "${credential.password}"`);
         } else {
             await this.locators.secondaryButton().click();
             await this.expect(deploymentTargetTab(credential.name)).toHaveCount(0, `Deployment target ${credential.name} should not be visible after canceling`);
