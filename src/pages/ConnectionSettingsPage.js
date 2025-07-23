@@ -33,7 +33,7 @@ export default class ConnectionSettingsPage extends SettingsPage {
             password: () => this.page.locator('[name="password-input"]'),
             newUsername: () => this.page.locator('[name="new-username-input"]'),
             newPassword: () => this.page.locator('[name="new-password-input"]'),
-            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' }),
+            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password.' }),
             deploymentTargetTab: (text = null) => {
                 const selector = `.sqp-menu-items-deployments .sqp-menu-item`;
                 return !text ? this.page.locator(selector) : this.page.locator(selector, { hasText: text });
