@@ -93,11 +93,13 @@ export default class ConnectionSettingsPage extends SettingsPage {
      * Disconnect the remaining deployment targets
      */
     async disconnectAll() {
-        const { disconnect } = this.locators;
-        while ((await disconnect().count()) > 0) {
+        const { disconnect, deploymentTargetTab } = this.locators;
+        let count = await deploymentTargetTab().count();
+        while (count > 0) {
             await disconnect().click();
             await this.confirmModal();
             await this.expectLoadingShowAndHide();
+            count -= 1;
         }
         await this.page.waitForURL(/#onboarding-deployments/);
     }
