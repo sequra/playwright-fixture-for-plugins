@@ -31,6 +31,7 @@ export default class CheckoutPage extends Page {
             sqCCNumber: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-number'),
             sqCCExp: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-exp'),
             sqCCCsc: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-csc'),
+            sqPaymentButton: iframe => iframe.locator('.payment-btn-container button:not([disabled])'),
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
@@ -171,12 +172,12 @@ export default class CheckoutPage extends Page {
      */
     async fillCreditCard(iframe, options) {
         const { creditCard } = options;
-        const { sqCCNumber, sqCCExp, sqCCCsc, sqIframeBtn } = this.locators;
+        const { sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton } = this.locators;
         await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
         await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
         await sqCCExp(iframe).pressSequentially(creditCard.exp, { delay: 100 });
         await sqCCCsc(iframe).pressSequentially(creditCard.cvc, { delay: 100 });
-        await sqIframeBtn(iframe).click();
+        await sqPaymentButton(iframe).click();
     }
 
     /**
