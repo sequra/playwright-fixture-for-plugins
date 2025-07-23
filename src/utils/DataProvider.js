@@ -112,7 +112,7 @@ export default class DataProvider extends Fixture {
                     nin: '060212312345',
                     otp: ['1', '2', '3', '4', '5']
                 };
-            case 'nonSpecial':
+            case 'spain':
                 return shopper;
             default:
                 throw new Error(`Invalid merchant reference "${alias}"`);
