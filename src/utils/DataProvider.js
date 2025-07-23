@@ -110,7 +110,7 @@ export default class DataProvider extends Fixture {
                     postcode: '75013',
                     phone: '667042676',
                     nin: '060212312345',
-                    otp: ['1', '2', '3', '4', '5']
+                    otp: ['4', '2', '6', '7', '6']
                 };
             case 'spain':
                 return shopper;
