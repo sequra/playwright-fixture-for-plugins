@@ -77,7 +77,7 @@ export default class DataProvider extends Fixture {
             postcode: '08010',
             phone: '666666666',
             dateOfBirth: '01/01/2000',
-            dni: '23232323T',
+            nin: '23232323T',
             creditCard: {
                 number: '4716773077339777',
                 exp: '12/30',
@@ -109,7 +109,7 @@ export default class DataProvider extends Fixture {
                     state: 'Paris',
                     postcode: '75013',
                     phone: '667042676',
-                    dni: '060212312345',
+                    nin: '060212312345',
                     otp: ['1', '2', '3', '4', '5']
                 };
             case 'nonSpecial':

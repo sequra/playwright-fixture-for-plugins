@@ -189,19 +189,19 @@ export default class CheckoutPage extends Page {
      * 
      * @param {Object} options Contains the data to fill the form
      * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.dni National identification number
+     * @param {string} options.nin National identification number
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
     async fillI1CheckoutForm(options) {
-        const { dateOfBirth, dni } = options;
+        const { dateOfBirth, nin } = options;
         await this.locators.sqIframeI1Locator().waitFor({ state: 'attached', timeout: 10000 });
         const iframe = this.locators.sqIframeI1();
         // First name, last name, and mobile phone came already filled.
         await this.locators.sqDateOfBirth(iframe).click();
         await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
         await this.locators.sqNin(iframe).click();
-        await this.locators.sqNin(iframe).pressSequentially(dni);
+        await this.locators.sqNin(iframe).pressSequentially(nin);
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
