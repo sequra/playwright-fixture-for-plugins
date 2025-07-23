@@ -70,14 +70,14 @@ export default class ConnectionSettingsPage extends SettingsPage {
      */
     async fillManageDeploymentTargetsForm(options) {
         const { credential, save } = options;
-        const { newUsername, newPassword, manageDeploymentTargetsButton, deploymentTargetTab } = this.locators;
+        const { newUsername, newPassword, manageDeploymentTargetsButton, deploymentTargetTab, modalConfirmButton } = this.locators;
         await manageDeploymentTargetsButton().click();
         await deploymentTargetTab(credential.name).click();
         await newUsername().fill(credential.username);
         await newPassword().fill(credential.password);
 
         if (save) {
-            await this.locators.primaryButton().click();
+            await modalConfirmButton().click();
             await this.expectLoadingShowAndHide();
             // Check if the values were saved correctly
             await deploymentTargetTab(credential.name).click();
