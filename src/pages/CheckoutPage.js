@@ -27,6 +27,10 @@ export default class CheckoutPage extends Page {
             sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
+            sqIframeCreditCard: iframe => iframe.frameLocator('#mufasa-iframe'),
+            sqCCNumber: iframe => this.sqIframeCreditCard(iframe).locator('#cc_number'),
+            sqCCExp: iframe => this.sqIframeCreditCard(iframe).locator('#cc_exp'),
+            sqCCCsc: iframe => this.sqIframeCreditCard(iframe).locator('#cc_csc'),
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
@@ -156,6 +160,26 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Fill the credit card form
+     * @param {import("@playwright/test").FrameLocator} iframe
+     * @param {Object} options Contains the data to fill the form
+     * @param {Object} options.creditCard Credit card
+     * @param {string} options.creditCard.number Credit card number
+     * @param {string} options.creditCard.exp Credit card expiration date
+     * @param {string} options.creditCard.cvc Credit card CVC
+     * @returns {Promise<void>}
+     */
+    async fillCreditCard(iframe, options) {
+        const { creditCard } = options;
+        const { sqCCNumber, sqCCExp, sqCCCsc, sqIframeBtn } = this.locators;
+        await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
+        await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
+        await sqCCExp(iframe).pressSequentially(creditCard.exp, { delay: 100 });
+        await sqCCCsc(iframe).pressSequentially(creditCard.cvc, { delay: 100 });
+        await sqIframeBtn(iframe).click();
+    }
+
+    /**
      * Fill OTP fields of the Checkout Form
      * @param {import("@playwright/test").FrameLocator} iframe
      * @param {Object} options Contains the data to fill the form
@@ -215,6 +239,7 @@ export default class CheckoutPage extends Page {
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
+        await this.fillCreditCard(iframe, options);
     }
 
     async fillSp1CheckoutForm(options) {
