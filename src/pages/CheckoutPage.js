@@ -7,17 +7,6 @@ import Page from "./Page.js";
 export default class CheckoutPage extends Page {
 
     /**
-    * Hold CSS selectors used by several locators
-    * 
-    * @returns {Object}
-    */
-    initSelectors() {
-        return {
-            sqIframeI1: '#sq-identification-i1'
-        };
-    }
-
-    /**
     * Init the locators with the locators available
     * 
     * @returns {Object}
@@ -27,8 +16,8 @@ export default class CheckoutPage extends Page {
             paymentMethods: opt => this.paymentMethodsLocator(opt),
             paymentMethodTitle: opt => this.paymentMethodTitleLocator(opt),
             paymentMethodInput: opt => this.paymentMethodInputLocator(opt),
-            sqIframeI1: () => this.page.frameLocator(this.selectors.sqIframeI1),
-            sqIframeI1Locator: () => this.page.locator(this.selectors.sqIframeI1),
+            sqIframe: product => this.page.frameLocator(`#sq-identification-${product}`),
+            sqIframeLocator: product => this.page.locator(`#sq-identification-${product}`),
             sqDateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             sqNin: iframe => iframe.locator('[name="nin"]'),
             sqAcceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
@@ -197,8 +186,8 @@ export default class CheckoutPage extends Page {
      */
     async fillI1CheckoutForm(options) {
         const { dateOfBirth, nin } = options;
-        await this.locators.sqIframeI1Locator().waitFor({ state: 'attached', timeout: 10000 });
-        const iframe = this.locators.sqIframeI1();
+        await this.locators.sqIframeLocator('i1').waitFor({ state: 'attached', timeout: 10000 });
+        const iframe = this.locators.sqIframe('i1');
         // First name, last name, and mobile phone came already filled.
         await this.locators.sqDateOfBirth(iframe).click();
         await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
@@ -211,8 +200,8 @@ export default class CheckoutPage extends Page {
 
     async fillPp3CheckoutForm(options) {
         const { dateOfBirth, nin } = options;
-        await this.locators.sqIframeI1Locator().waitFor({ state: 'attached', timeout: 10000 });
-        const iframe = this.locators.sqIframeI1();
+        await this.locators.sqIframeLocator('pp3').waitFor({ state: 'attached', timeout: 10000 });
+        const iframe = this.locators.sqIframe('pp3');
         await this.locators.sqIframeBtn(iframe).click(); // Click to proceed with the selected payment plan
         // First name, last name, and mobile phone came already filled.
         await this.locators.sqDateOfBirth(iframe).click();
