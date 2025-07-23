@@ -31,7 +31,14 @@ export default class ConnectionSettingsPage extends SettingsPage {
             },
             username: () => this.page.locator('[name="username-input"]'),
             password: () => this.page.locator('[name="password-input"]'),
-            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' })
+            newUsername: () => this.page.locator('[name="new-username-input"]'),
+            newPassword: () => this.page.locator('[name="new-password-input"]'),
+            credentialsError: () => this.page.locator('.sqp-alert-title').filter({ hasText: 'Invalid username or password. Validate connection data.' }),
+            deploymentTargetTab: (text = null) => {
+                const selector = `.sqp-menu-items-deployments .sqp-menu-item`;
+                return !text ? this.page.locator(selector) : this.page.locator(selector, { hasText: text });
+            },
+            manageDeploymentTargetsButton: () => this.page.locator('.sqm--deployment .sq-button'),
         };
     }
 
@@ -40,24 +47,78 @@ export default class ConnectionSettingsPage extends SettingsPage {
         await this.locators.modalConfirmButton().click();
     }
 
-    async disconnect() {
-        await this.locators.disconnect().click();
+    /**
+     * Disconnect from a deployment target
+     * @param {Object} options
+     * @param {import('../utils/types.js').DeploymentTargetCredentials} options.credential The credentials to test with
+     */
+    async disconnect(options) {
+        const { credential } = options;
+        const { disconnect, deploymentTargetTab } = this.locators;
+
+        await deploymentTargetTab(credential.name).click();
+        await disconnect().click();
         await this.confirmModal();
-        await this.page.waitForURL(/#onboarding-connect/);
+        await this.expectLoadingShowAndHide();
+    }
+
+    /**
+     * Fill the manage deployment targets form
+     * @param {Object} options
+     * @param {import('../utils/types.js').DeploymentTargetCredentials} options.credential The credentials to test with
+     * @param {boolean} options.save Whether to save the changes or cancel them
+     */
+    async fillManageDeploymentTargetsForm(options) {
+        const { credential, save } = options;
+        const { username, password, newUsername, newPassword, manageDeploymentTargetsButton, deploymentTargetTab, modalConfirmButton } = this.locators;
+        await manageDeploymentTargetsButton().click();
+        await deploymentTargetTab(credential.name).click();
+        await newUsername().fill(credential.username);
+        await newPassword().fill(credential.password);
+
+        if (save) {
+            await modalConfirmButton().click();
+            await this.expectLoadingShowAndHide();
+            // Check if the values were saved correctly
+            await deploymentTargetTab(credential.name).click();
+            await this.expect(username()).toHaveValue(credential.username, `Username should be "${credential.username}"`);
+            await this.expect(password()).toHaveValue(credential.password, `Password should be "${credential.password}"`);
+        } else {
+            await this.locators.secondaryButton().click();
+            await this.expect(deploymentTargetTab(credential.name)).toHaveCount(0, `Deployment target ${credential.name} should not be visible after canceling`);
+        }
+    }
+
+    /**
+     * Disconnect the remaining deployment targets
+     */
+    async disconnectAll() {
+        const { disconnect, deploymentTargetTab } = this.locators;
+        let count = await deploymentTargetTab().count();
+        while (count > 0) {
+            await disconnect().click();
+            await this.confirmModal();
+            await this.expectLoadingShowAndHide();
+            count -= 1;
+        }
+        await this.page.waitForURL(/#onboarding-deployments/);
     }
 
     /**
      * Fill the connect form
-     * @param {Object} options 
-     * @param {string} options.username The username to use
-     * @param {string} options.password The password to use
+     * @param {Object} options
+     * @param {import('../utils/types.js').DeploymentTargetCredentials[]} options.credentials The credentials to use
      * @param {string} options.env The environment to use
      */
     async fillForm(options) {
-        const { envOption, username, password } = this.locators;
+        const { envOption, deploymentTargetTab, username, password } = this.locators;
         await envOption('label', options.env).click();
-        await username().fill(options.username);
-        await password().fill(options.password);
+
+        for (const credential of options.credentials) {
+            await deploymentTargetTab(credential.name).click();
+            await username().fill(credential.username);
+            await password().fill(credential.password);
+        }
     }
 
     /**

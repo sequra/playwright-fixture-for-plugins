@@ -1,21 +1,12 @@
 import BackOffice from "../base/BackOffice.js";
+import DataProvider from "../utils/DataProvider.js";
+import SeQuraHelper from "../utils/SeQuraHelper.js";
 import Page from "./Page.js";
 
 /**
  * Checkout page
  */
 export default class CheckoutPage extends Page {
-
-    /**
-    * Hold CSS selectors used by several locators
-    * 
-    * @returns {Object}
-    */
-    initSelectors() {
-        return {
-            sqIframeI1: '#sq-identification-i1'
-        };
-    }
 
     /**
     * Init the locators with the locators available
@@ -27,8 +18,8 @@ export default class CheckoutPage extends Page {
             paymentMethods: opt => this.paymentMethodsLocator(opt),
             paymentMethodTitle: opt => this.paymentMethodTitleLocator(opt),
             paymentMethodInput: opt => this.paymentMethodInputLocator(opt),
-            sqIframeI1: () => this.page.frameLocator(this.selectors.sqIframeI1),
-            sqIframeI1Locator: () => this.page.locator(this.selectors.sqIframeI1),
+            sqIframe: product => this.page.frameLocator(`#sq-identification-${product}`),
+            sqIframeLocator: product => this.page.locator(`#sq-identification-${product}`),
             sqDateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             sqNin: iframe => iframe.locator('[name="nin"]'),
             sqAcceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
@@ -38,6 +29,13 @@ export default class CheckoutPage extends Page {
             sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
+            sqIframeCreditCard: iframe => iframe.frameLocator('#mufasa-iframe'),
+            sqCCNumber: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-number'),
+            sqCCExp: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-exp'),
+            sqCCCsc: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-csc'),
+            sqPaymentButton: iframe => iframe.locator('.payment-btn-container button:not([disabled])'),
+            monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
+            monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
             moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
             moreInfoLink: options => this.moreInfoLinkLocator(options)
@@ -165,6 +163,26 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Fill the credit card form
+     * @param {import("@playwright/test").FrameLocator} iframe
+     * @param {Object} options Contains the data to fill the form
+     * @param {Object} options.creditCard Credit card
+     * @param {string} options.creditCard.number Credit card number
+     * @param {string} options.creditCard.exp Credit card expiration date
+     * @param {string} options.creditCard.cvc Credit card CVC
+     * @returns {Promise<void>}
+     */
+    async fillCreditCard(iframe, options) {
+        const { creditCard } = options;
+        const { sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton } = this.locators;
+        await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
+        await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
+        await sqCCExp(iframe).pressSequentially(creditCard.exp, { delay: 100 });
+        await sqCCCsc(iframe).pressSequentially(creditCard.cvc, { delay: 100 });
+        await sqPaymentButton(iframe).click();
+    }
+
+    /**
      * Fill OTP fields of the Checkout Form
      * @param {import("@playwright/test").FrameLocator} iframe
      * @param {Object} options Contains the data to fill the form
@@ -189,26 +207,42 @@ export default class CheckoutPage extends Page {
      * 
      * @param {Object} options Contains the data to fill the form
      * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.dni National identification number
+     * @param {string} options.nin National identification number
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
     async fillI1CheckoutForm(options) {
-        const { dateOfBirth, dni } = options;
-        await this.locators.sqIframeI1Locator().waitFor({ state: 'attached', timeout: 10000 });
-        const iframe = this.locators.sqIframeI1();
+        const { dateOfBirth, nin } = options;
+        await this.locators.sqIframeLocator('i1').waitFor({ state: 'attached', timeout: 10000 });
+        const iframe = this.locators.sqIframe('i1');
         // First name, last name, and mobile phone came already filled.
         await this.locators.sqDateOfBirth(iframe).click();
         await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
         await this.locators.sqNin(iframe).click();
-        await this.locators.sqNin(iframe).pressSequentially(dni);
+        await this.locators.sqNin(iframe).pressSequentially(nin);
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
     }
 
     async fillPp3CheckoutForm(options) {
-        throw new Error('Not implemented');
+        const { dateOfBirth, nin } = options;
+        await this.locators.sqIframeLocator('pp3').waitFor({ state: 'attached', timeout: 10000 });
+        const iframe = this.locators.sqIframe('pp3');
+        await this.locators.sqIframeBtn(iframe).click(); // Click to proceed with the selected payment plan
+        // First name, last name, and mobile phone came already filled.
+        await this.locators.sqDateOfBirth(iframe).click();
+        await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
+        await this.locators.sqNin(iframe).click();
+        await this.locators.sqNin(iframe).pressSequentially(nin);
+        // Select Monthly income and Fixed monthly fees
+        await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
+        await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+
+        await this.locators.sqAcceptPrivacyPolicy(iframe).click();
+        await this.locators.sqIframeBtn(iframe).click();
+        await this.fillOtp(iframe, options);
+        await this.fillCreditCard(iframe, options);
     }
 
     async fillSp1CheckoutForm(options) {
@@ -299,15 +333,36 @@ export default class CheckoutPage extends Page {
         throw new Error('Not implemented');
     }
 
-     /**
-     * Test if the "+ info" link is working properly
-     * @param {Object} options
-     * @param {string} options.product seQura product (i1, pp3, etc)
-     * @param {string} options.campaign Campaign name
-     * @returns {Promise<void>}
-     */
-     async openAndCloseEducationalPopup(options) {  
+    /**
+    * Test if the "+ info" link is working properly
+    * @param {Object} options
+    * @param {string} options.product seQura product (i1, pp3, etc)
+    * @param {string} options.campaign Campaign name
+    * @returns {Promise<void>}
+    */
+    async openAndCloseEducationalPopup(options) {
         await this.locators.moreInfoLink(options).click();
         await this.locators.moreInfoCloseBtn().click();
+    }
+
+    /**
+     * Verifies if the placed order has the merchant ID defined for the address country
+     * This requires the 'verify_order_has_merchant_id' webhook to be implemented
+     * 
+     * @param {string} country The country code
+     * @param {SeQuraHelper} helper The back office helper instance
+     * @param {DataProvider} dataProvider The data provider instance
+     * @param {Object} options Additional options if needed
+     * @returns {Promise<void>}
+     */
+    async expectOrderHasTheCorrectMerchantId(country, helper, dataProvider, options = {}) {
+        const merchantId = dataProvider.countriesMerchantRefs().filter(c => c.code === country)[0].merchantRef;
+        const orderNumber = await this.getOrderNumber();
+        await helper.executeWebhook({
+            webhook: helper.webhooks.verify_order_has_merchant_id, args: [
+                { name: 'order_id', value: orderNumber },
+                { name: 'merchant_id', value: merchantId }
+            ]
+        });
     }
 }

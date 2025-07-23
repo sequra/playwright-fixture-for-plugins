@@ -52,4 +52,16 @@
  * @property {string|null} campaign The campaign identifier, if applicable
  */
 
+/**
+ * @typedef {Object} DeploymentTargetOptions
+ * @property {string} name The name of the deployment target
+ */
+
+/**
+ * @typedef {Object} DeploymentTargetCredentials
+ * @property {string} name The name of the deployment target
+ * @property {string} username The username for the deployment target
+ * @property {string} password The password for the deployment target
+ */
+
 export { }

@@ -1,5 +1,6 @@
 import Fixture from '../base/Fixture.js';
 /** @typedef {import('./types.js').WidgetOptions} WidgetOptions */
+/** @typedef {import('./types.js').DeploymentTargetOptions} DeploymentTargetOptions */
 
 /**
  * Provide data for the tests
@@ -25,8 +26,8 @@ export default class DataProvider extends Fixture {
         switch (merchantRef) {
             case 'dummy_automated_tests':
                 return [
+                    { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
                     { name: 'Spain', paymentMethods: ['Paga Después', 'Divide tu pago en 3', 'Paga Fraccionado'] },
-                    // { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
                     { name: 'Italy', paymentMethods: ['Pagamento a rate'] },
                     { name: 'Portugal', paymentMethods: ['Pagamento Fracionado'] }
                 ];
@@ -44,8 +45,8 @@ export default class DataProvider extends Fixture {
         switch (username) {
             case 'dummy_automated_tests':
                 return [
+                    { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
                     { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
-                    // { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
                     { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
                     { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
                 ];
@@ -60,10 +61,11 @@ export default class DataProvider extends Fixture {
      * @param {string} alias Use:
      * - approve: For placing an approved 🍊 order 
      * - cancel: For placing a cancelled 🍊 order
-     * - nonSpecial: For placing a normal order
+     * - spain: For placing a normal order in Spain
+     * - france: For placing a normal order in France
      * @returns {Object}
      */
-    shopper(alias = 'nonSpecial') {
+    shopper(alias = 'spain') {
         const shopper = {
             email: 'test@sequra.es',
             firstName: 'Fulano',
@@ -75,7 +77,7 @@ export default class DataProvider extends Fixture {
             postcode: '08010',
             phone: '666666666',
             dateOfBirth: '01/01/2000',
-            dni: '23232323T',
+            nin: '23232323T',
             creditCard: {
                 number: '4716773077339777',
                 exp: '12/30',
@@ -97,7 +99,20 @@ export default class DataProvider extends Fixture {
                     firstName: 'Review Test Cancel',
                     lastName: 'Review Test Cancel',
                 };
-            case 'nonSpecial':
+            case 'france':
+                return {
+                    ...shopper,
+                    firstName: 'Monsieur',
+                    lastName: 'Untel',
+                    country: 'FR',
+                    city: 'Paris',
+                    state: 'Paris',
+                    postcode: '75013',
+                    phone: '667042676',
+                    nin: '060212312345',
+                    otp: ['4', '2', '6', '7', '6']
+                };
+            case 'spain':
                 return shopper;
             default:
                 throw new Error(`Invalid merchant reference "${alias}"`);
@@ -306,5 +321,16 @@ export default class DataProvider extends Fixture {
     cartFrontEndWidgetOptions = (options) => {
         const { amount, registrationAmount } = options;
         return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount);
+    }
+
+    /**
+     * Options for the deployment targets
+     * @returns {Array<DeploymentTargetOptions>} Options for the deployment targets
+     */
+    deploymentTargetsOptions() {
+        return [
+            { name: 'seQura' },
+            { name: 'SVEA' }
+        ];
     }
 }
