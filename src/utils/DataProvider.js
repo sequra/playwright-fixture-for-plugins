@@ -61,10 +61,11 @@ export default class DataProvider extends Fixture {
      * @param {string} alias Use:
      * - approve: For placing an approved 🍊 order 
      * - cancel: For placing a cancelled 🍊 order
-     * - nonSpecial: For placing a normal order
+     * - spain: For placing a normal order in Spain
+     * - france: For placing a normal order in France
      * @returns {Object}
      */
-    shopper(alias = 'nonSpecial') {
+    shopper(alias = 'spain') {
         const shopper = {
             email: 'test@sequra.es',
             firstName: 'Fulano',
@@ -97,6 +98,19 @@ export default class DataProvider extends Fixture {
                     ...shopper,
                     firstName: 'Review Test Cancel',
                     lastName: 'Review Test Cancel',
+                };
+            case 'france':
+                return {
+                    ...shopper,
+                    firstName: 'Monsieur',
+                    lastName: 'Untel',
+                    country: 'FR',
+                    city: 'Paris',
+                    state: 'Paris',
+                    postcode: '75013',
+                    phone: '667042676',
+                    dni: '060212312345',
+                    otp: ['1', '2', '3', '4', '5']
                 };
             case 'nonSpecial':
                 return shopper;
