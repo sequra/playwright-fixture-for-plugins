@@ -70,7 +70,7 @@ export default class ConnectionSettingsPage extends SettingsPage {
      */
     async fillManageDeploymentTargetsForm(options) {
         const { credential, save } = options;
-        const { newUsername, newPassword, manageDeploymentTargetsButton, deploymentTargetTab, modalConfirmButton } = this.locators;
+        const { username, password, newUsername, newPassword, manageDeploymentTargetsButton, deploymentTargetTab, modalConfirmButton } = this.locators;
         await manageDeploymentTargetsButton().click();
         await deploymentTargetTab(credential.name).click();
         await newUsername().fill(credential.username);
@@ -81,8 +81,8 @@ export default class ConnectionSettingsPage extends SettingsPage {
             await this.expectLoadingShowAndHide();
             // Check if the values were saved correctly
             await deploymentTargetTab(credential.name).click();
-            await this.expect(newUsername()).toHaveValue(credential.username, `Username should be "${credential.username}"`);
-            await this.expect(newPassword()).toHaveValue(credential.password, `Password should be "${credential.password}"`);
+            await this.expect(username()).toHaveValue(credential.username, `Username should be "${credential.username}"`);
+            await this.expect(password()).toHaveValue(credential.password, `Password should be "${credential.password}"`);
         } else {
             await this.locators.secondaryButton().click();
             await this.expect(deploymentTargetTab(credential.name)).toHaveCount(0, `Deployment target ${credential.name} should not be visible after canceling`);
