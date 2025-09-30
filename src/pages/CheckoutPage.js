@@ -50,9 +50,9 @@ export default class CheckoutPage extends Page {
      * @returns {Promise<void>}
      */
     async goto(options = { force: false }) {
-        const options = { force: false, ...options };
-        const url = this.checkoutUrl(options);
-        if (!options.force && this.page.url() === url) {
+        const opt = { force: false, ...options };
+        const url = this.checkoutUrl(opt);
+        if (!opt.force && this.page.url() === url) {
             // Do not reload the page if we are already on the checkout page
             return;
         }
