@@ -46,11 +46,13 @@ export default class CheckoutPage extends Page {
      * Navigate to the page
      * 
      * @param {Object} options Additional options
+     * @param {boolean} options.force Whether to force navigation even if we are already on the page
      * @returns {Promise<void>}
      */
-    async goto(options = {}) {
+    async goto(options = { force: false }) {
+        const options = { force: false, ...options };
         const url = this.checkoutUrl(options);
-        if (this.page.url() === url) {
+        if (!options.force && this.page.url() === url) {
             // Do not reload the page if we are already on the checkout page
             return;
         }
