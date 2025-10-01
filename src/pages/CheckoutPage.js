@@ -30,6 +30,7 @@ export default class CheckoutPage extends Page {
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
             sqIframeCreditCard: iframe => iframe.frameLocator('#mufasa-iframe'),
+            sqCCName: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cardholder_name'),
             sqCCNumber: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-number'),
             sqCCExp: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-exp'),
             sqCCCsc: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-csc'),
@@ -177,11 +178,16 @@ export default class CheckoutPage extends Page {
      */
     async fillCreditCard(iframe, options) {
         const { creditCard } = options;
-        const { sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton } = this.locators;
+        const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton } = this.locators;
+
         await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
         await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
         await sqCCExp(iframe).pressSequentially(creditCard.exp, { delay: 100 });
         await sqCCCsc(iframe).pressSequentially(creditCard.cvc, { delay: 100 });
+        // Check if cardholder name field is present and fill it if so
+        if (await sqCCName(iframe).count() > 0) {
+            await sqCCName(iframe).pressSequentially(creditCard.name, { delay: 100 });
+        }
         await sqPaymentButton(iframe).click();
     }
 

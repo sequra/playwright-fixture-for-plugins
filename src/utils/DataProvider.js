@@ -82,6 +82,7 @@ export default class DataProvider extends Fixture {
                 number: '4716773077339777',
                 exp: '12/30',
                 cvc: '123',
+                name: 'SEQURA TEST'
             },
             otp: ['6', '6', '6', '6', '6']
         };
