@@ -36,6 +36,7 @@ export default class CheckoutPage extends Page {
             sqPaymentButton: iframe => iframe.locator('.payment-btn-container button:not([disabled])'),
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
+            occupationSelect: iframe => iframe.locator('#occupation'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
             moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
             moreInfoLink: options => this.moreInfoLinkLocator(options)
@@ -237,9 +238,18 @@ export default class CheckoutPage extends Page {
         await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
         await this.locators.sqNin(iframe).click();
         await this.locators.sqNin(iframe).pressSequentially(nin);
-        // Select Monthly income and Fixed monthly fees
-        await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
-        await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+        // Select monthly income. This field might not be present in some countries
+        if (await this.locators.monthlyIncomeSelect(iframe).count() > 0) {
+            await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
+        }
+        // Select monthly fixed expenses. This field might not be present in some countries
+        if (await this.locators.monthlyFixedExpensesSelect(iframe).count() > 0) {
+            await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+        }
+        // Select occupation. This field might not be present in some countries
+        if (await this.locators.occupationSelect(iframe).count() > 0) {
+            await this.locators.occupationSelect(iframe).selectOption({ value: 'unemployed' });
+        }
 
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
         await this.locators.sqIframeBtn(iframe).click();
