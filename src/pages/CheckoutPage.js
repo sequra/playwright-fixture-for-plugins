@@ -182,7 +182,7 @@ export default class CheckoutPage extends Page {
         const { creditCard } = options;
         const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton, sqNewCreditCardButton } = this.locators;
 
-        try{
+        try {
             // Click the new credit card button if present.
             await sqNewCreditCardButton(iframe).click({ timeout: 3000 });
         } catch (e) {
@@ -388,10 +388,14 @@ export default class CheckoutPage extends Page {
      * @param {SeQuraHelper} helper The back office helper instance
      * @param {DataProvider} dataProvider The data provider instance
      * @param {Object} options Additional options if needed
+     * @param {boolean} options.isOrderForService Whether the order is for a service
      * @returns {Promise<void>}
      */
     async expectOrderHasTheCorrectMerchantId(country, helper, dataProvider, options = {}) {
-        const merchantId = dataProvider.countriesMerchantRefs().filter(c => c.code === country)[0].merchantRef;
+        const { isOrderForService = false } = options;
+        const merchantId = dataProvider.countriesMerchantRefs(
+            isOrderForService ? 'dummy_services_automated_tests' : 'dummy_automated_tests'
+        ).filter(c => c.code === country)[0].merchantRef;
         const orderNumber = await this.getOrderNumber();
         await helper.executeWebhook({
             webhook: helper.webhooks.verify_order_has_merchant_id, args: [

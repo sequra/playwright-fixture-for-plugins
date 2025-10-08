@@ -38,7 +38,7 @@ export default class DataProvider extends Fixture {
 
     /**
      * Data for PaymentMethodsSettingsPage
-     * @param {string} username Options: dummy_automated_tests
+     * @param {string} username Options: dummy_automated_tests, dummy_services_automated_tests
      * @returns {Array<Object>}
      */
     countriesMerchantRefs(username = 'dummy_automated_tests') {
@@ -49,6 +49,10 @@ export default class DataProvider extends Fixture {
                     { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
                     { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
                     { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
+                ];
+            case 'dummy_services_automated_tests':
+                return [
+                    { code: 'ES', name: 'Spain', merchantRef: 'dummy_services_automated_tests' }
                 ];
             default:
                 throw new Error(`Invalid username "${username}"`);
