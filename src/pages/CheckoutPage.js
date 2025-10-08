@@ -23,6 +23,7 @@ export default class CheckoutPage extends Page {
             sqDateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             sqNin: iframe => iframe.locator('[name="nin"]'),
             sqAcceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
+            sqAcceptServiceDuration: iframe => iframe.locator('#sequra_service_duration_accepted'),
             sqIframeBtn: iframe => iframe.locator('.actions-section button:not([disabled])'),
             sqOtp1: iframe => iframe.locator('[aria-label="Please enter OTP character 1"]'),
             sqOtp2: iframe => iframe.locator('[aria-label="Please enter OTP character 2"]'),
@@ -230,6 +231,10 @@ export default class CheckoutPage extends Page {
         await this.locators.sqNin(iframe).click();
         await this.locators.sqNin(iframe).pressSequentially(nin);
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
+        // Accept service duration if the checkbox is present.
+        if (await this.locators.sqAcceptServiceDuration(iframe).count() > 0) {
+            await this.locators.sqAcceptServiceDuration(iframe).click();
+        }
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
     }
@@ -258,6 +263,10 @@ export default class CheckoutPage extends Page {
         }
 
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
+        // Accept service duration if the checkbox is present.
+        if (await this.locators.sqAcceptServiceDuration(iframe).count() > 0) {
+            await this.locators.sqAcceptServiceDuration(iframe).click();
+        }
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
         await this.fillCreditCard(iframe, options);
