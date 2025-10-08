@@ -30,6 +30,7 @@ export default class CheckoutPage extends Page {
             sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
+            sqNewCreditCardButton: iframe => iframe.locator('.reuse-card-component .PaymentMethodsSelectionSection__actionsSection > .tlr-Button___tertiary_j9CJ-'),
             sqIframeCreditCard: iframe => iframe.frameLocator('#mufasa-iframe'),
             sqCCName: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cardholder_name'),
             sqCCNumber: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-number'),
@@ -179,7 +180,12 @@ export default class CheckoutPage extends Page {
      */
     async fillCreditCard(iframe, options) {
         const { creditCard } = options;
-        const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton } = this.locators;
+        const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton, sqNewCreditCardButton } = this.locators;
+
+        // Click the new credit card button if present.
+        if (await sqNewCreditCardButton(iframe).count() > 0) {
+            await sqNewCreditCardButton(iframe).click();
+        }
 
         await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
         await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
