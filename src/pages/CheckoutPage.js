@@ -182,9 +182,11 @@ export default class CheckoutPage extends Page {
         const { creditCard } = options;
         const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton, sqNewCreditCardButton } = this.locators;
 
-        // Click the new credit card button if present.
-        if (await sqNewCreditCardButton(iframe).count() > 0) {
-            await sqNewCreditCardButton(iframe).click();
+        try{
+            // Click the new credit card button if present.
+            await sqNewCreditCardButton(iframe).click({ timeout: 3000 });
+        } catch (e) {
+            // Do nothing, the button is not visible
         }
 
         await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
