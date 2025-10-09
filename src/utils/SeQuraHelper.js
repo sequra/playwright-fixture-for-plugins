@@ -30,9 +30,7 @@ export default class SeQuraHelper extends Fixture {
     /**
      * Prepare the URL to use
      * 
-     * @param {Object} options Additional options
-     * @param {string} options.webhook The webhook
-     * @param {Array<Object>} options.args The arguments to pass to the webhook. Each argument is an object with `name` and `value` properties
+     * @param {WebhookOption} options Additional options
      * @returns {string} The URL to use
      */
     getWebhookUrl(options = { webhook, args: [] }) {
