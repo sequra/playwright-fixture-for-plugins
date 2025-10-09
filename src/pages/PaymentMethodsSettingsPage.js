@@ -39,10 +39,7 @@ export default class PaymentMethodsSettingsPage extends SettingsPage {
      * @returns {Promise<void>}
      */
     async expectAvailablePaymentMethodsAreVisible(countries) {
-        const [defaultCountry, ...otherCountries] = countries;
-        await this.expect(this.locators.selectedOption(defaultCountry.name), `The default country "${defaultCountry.name}" is shown as selected`).toBeVisible();
-
-        for (const { name, paymentMethods } of otherCountries) {
+        for (const { name, paymentMethods } of countries) {
             await this.locators.dropdownButton().click();
             await this.locators.dropdownListItem(name).click();
             await this.expect(this.locators.dropdownSelectedListItem(name), `The country "${name}" is shown as selected`).toBeVisible();
@@ -51,7 +48,6 @@ export default class PaymentMethodsSettingsPage extends SettingsPage {
             for (const paymentMethod of paymentMethods) {
                 await this.expect(this.locators.paymentMethodTitle(paymentMethod), `The payment method "${paymentMethod}" is visible`).toBeVisible();
             }
-
         }
     }
 }
