@@ -61,9 +61,11 @@ export default class OnboardingSettingsPage extends SettingsPage {
     async fillCountriesForm(options) {
         const { countries } = options;
         const { multiSelect, dropdownListItem, multiSelectSelectedListItem } = this.locators;
+        // Wait for the multi select to be visible
+        await this.expect(multiSelect()).toBeVisible({ timeout: 5000 });
         for (const { name } of countries) {
             if ((await multiSelectSelectedListItem(name).count()) > 0) {
-                continue; // Skip if already selected
+                continue; // Skip if the country is already selected
             }
             // Ignore timeout error if the item is not selected
             await multiSelect().click();
