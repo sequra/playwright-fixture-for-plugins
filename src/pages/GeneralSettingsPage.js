@@ -151,7 +151,7 @@ export default class GeneralSettingsPage extends SettingsPage {
      * @param {boolean} options.enabled
      */
     async setEnabledForServices(options) {
-        this.setToggle(options, this.locators.enabledForServicesToggle, 'Enable for services');
+        await this.setToggle(options, this.locators.enabledForServicesToggle, 'Enable for services');
         await this.expectEnabledForServicesToBe(options);
     }
 

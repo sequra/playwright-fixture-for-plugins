@@ -184,6 +184,7 @@ export default class SettingsPage extends Page {
      * @param {function} locator Must return a locator and receive an optional parameter locate with the value 'label' or 'input'
      * @param {*} fieldName The name of the field
      * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
+     * @returns {Promise<void>}
      */
     async setToggle(options, locator, fieldName, timeout = null) {
         const { enabled } = options;
@@ -194,6 +195,7 @@ export default class SettingsPage extends Page {
     /**
      * Close open dropdown
      * @param {import('@playwright/test').Locator} locator Dropdown locator
+     * @returns {Promise<void>}
      */
     async closeDropdownList(locator) {
         await this.locators.dropdownListVisible().waitFor({ state: 'visible', timeout: 5000 });
