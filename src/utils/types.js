@@ -70,4 +70,19 @@
  * @property {string} message The log message
  */
 
+
+
+/**
+ * @typedef {Object} WebhookOptionArg
+ * @property {string} name The name of the argument
+ * @property {string} value The value of the argument
+ */
+
+/**
+ * @typedef {Object} WebhookOption
+ * @property {string} webhook The webhook to execute
+ * @property {Array<WebhookOptionArg>} args The arguments to pass to the webhook
+ * 
+ */
+
 export { }
