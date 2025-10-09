@@ -394,7 +394,7 @@ export default class CheckoutPage extends Page {
     async expectOrderHasTheCorrectMerchantId(country, helper, dataProvider, options = {}) {
         const { isOrderForService = false } = options;
         const merchantId = dataProvider.countriesMerchantRefs(
-            isOrderForService ? 'dummy_services_automated_tests' : 'dummy_automated_tests'
+            isOrderForService ? DataProvider.SERVICE_USERNAME : DataProvider.DEFAULT_USERNAME
         ).filter(c => c.code === country)[0].merchantRef;
         const orderNumber = await this.getOrderNumber();
         await helper.executeWebhook({

@@ -6,6 +6,9 @@ import Fixture from '../base/Fixture.js';
  * Provide data for the tests
  */
 export default class DataProvider extends Fixture {
+    static DEFAULT_USERNAME = 'dummy_automated_tests';
+    static SERVICE_USERNAME = 'dummy_services_automated_tests';
+
     /**
      * @param {import('@playwright/test').Page} page
      * @param {string} baseURL
@@ -19,12 +22,12 @@ export default class DataProvider extends Fixture {
 
     /**
      * Data for PaymentMethodsSettingsPage
-     * @param {string} merchantRef Options: dummy_automated_tests
+     * @param {string} username Options: DataProvider.DEFAULT_USERNAME
      * @returns {Array<Object>}
      */
-    countriesPaymentMethods(merchantRef = 'dummy_automated_tests') {
-        switch (merchantRef) {
-            case 'dummy_automated_tests':
+    countriesPaymentMethods(username = DataProvider.DEFAULT_USERNAME) {
+        switch (username) {
+            case DataProvider.DEFAULT_USERNAME:
                 return [
                     { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
                     { name: 'Spain', paymentMethods: ['Paga Después', 'Divide tu pago en 3', 'Paga Fraccionado'] },
@@ -32,27 +35,27 @@ export default class DataProvider extends Fixture {
                     { name: 'Portugal', paymentMethods: ['Pagamento Fracionado'] }
                 ];
             default:
-                throw new Error(`Invalid merchant reference "${merchantRef}"`);
+                throw new Error(`Invalid username "${username}"`);
         }
     }
 
     /**
      * Data for PaymentMethodsSettingsPage
-     * @param {string} username Options: dummy_automated_tests, dummy_services_automated_tests
+     * @param {string} username Options: DataProvider.DEFAULT_USERNAME, DataProvider.SERVICE_USERNAME
      * @returns {Array<Object>}
      */
-    countriesMerchantRefs(username = 'dummy_automated_tests') {
+    countriesMerchantRefs(username = DataProvider.DEFAULT_USERNAME) {
         switch (username) {
-            case 'dummy_automated_tests':
+            case DataProvider.DEFAULT_USERNAME:
                 return [
                     { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
-                    { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
+                    { code: 'ES', name: 'Spain', merchantRef: DataProvider.DEFAULT_USERNAME },
                     { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
                     { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
                 ];
-            case 'dummy_services_automated_tests':
+            case DataProvider.SERVICE_USERNAME:
                 return [
-                    { code: 'ES', name: 'Spain', merchantRef: 'dummy_services_automated_tests' }
+                    { code: 'ES', name: 'Spain', merchantRef: DataProvider.SERVICE_USERNAME }
                 ];
             default:
                 throw new Error(`Invalid username "${username}"`);
@@ -127,12 +130,12 @@ export default class DataProvider extends Fixture {
     /**
      * Checkout payment methods
      * 
-     * @param {string} merchantRef 
+     * @param {string} merchantRef By default, it uses DataProvider.DEFAULT_USERNAME
      * @returns {Array<Object>} 
      */
-    checkoutPaymentMethods(merchantRef = 'dummy_automated_tests') {
+    checkoutPaymentMethods(merchantRef = DataProvider.DEFAULT_USERNAME) {
         switch (merchantRef) {
-            case 'dummy_automated_tests':
+            case DataProvider.DEFAULT_USERNAME:
                 return [
                     { title: 'Recibe tu compra antes de pagar', product: 'i1', checked: false },
                     { title: 'Divide en 3 partes de ', product: 'sp1', checked: false },
