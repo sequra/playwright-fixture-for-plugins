@@ -57,7 +57,7 @@ export default class SeQuraHelper extends Fixture {
     * @returns {Promise<void>}
     */
     async executeWebhook(options = { webhook, args: [] }) {
-        const { webhook, args } = options;
+        const { webhook, args = [] } = options;
         if (!this.webhooks[webhook]) {
             throw new Error(`Webhook "${webhook}" not found`);
         }
