@@ -92,7 +92,7 @@ export default class AdvancedSettingsPage extends SettingsPage {
      * @param {Array<LogEntry>} options.nonExpectedLogs Logs that should not be present. Optional
      * @returns {Promise<void>}
      */
-    async expectLogHasContent(options) {
+    async expectLogHasContent(options = {}) {
         const { expectedLogs = [], nonExpectedLogs = [] } = options;
         const { logEntry, firstLogEntry } = this.locators;
         await this.expect(firstLogEntry(), 'Log datatable has content').toBeVisible();
