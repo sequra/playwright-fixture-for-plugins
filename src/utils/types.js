@@ -64,4 +64,10 @@
  * @property {string} password The password for the deployment target
  */
 
+/**
+ * @typedef {Object} LogEntry
+ * @property {string} level The log level (e.g., 'INFO', 'ERROR')
+ * @property {string} message The log message
+ */
+
 export { }
