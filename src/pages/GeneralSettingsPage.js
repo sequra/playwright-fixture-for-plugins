@@ -1,3 +1,4 @@
+import { act } from 'react';
 import SettingsPage from './SettingsPage.js';
 
 export default class GeneralSettingsPage extends SettingsPage {
@@ -201,13 +202,11 @@ export default class GeneralSettingsPage extends SettingsPage {
             codes.push(code);
             await this.expectToBeVisible(selectedItem(this.page, name), `Country "${name}"`, true);
         }
-        // read the value of the hidden input
-        const hiddenInputValue = await countriesSelect().inputValue();
-        // split and sort the values
-        const hiddenInputValues = hiddenInputValue.split(',').sort();
         codes.sort();
+        // read the value of the hidden input
+        const actualCodes = (await countriesSelect().inputValue()).split(',').filter(v => v.trim() !== '').sort();
         // compare the values
-        this.expect(hiddenInputValues, `Countries selector input value should be "${codes.join(',')}"`).toEqual(codes);
+        this.expect(codes, `Countries selector input value should be "${codes.join(',')}"`).toEqual(actualCodes);
     }
 
     /**
