@@ -1,6 +1,7 @@
 import Fixture from '../base/Fixture.js';
 /** @typedef {import('./types.js').WidgetOptions} WidgetOptions */
 /** @typedef {import('./types.js').DeploymentTargetOptions} DeploymentTargetOptions */
+/** @typedef {import('./types.js').FrontEndWidgetOptions} FrontEndWidgetOptions */
 
 /**
  * Provide data for the tests
@@ -8,6 +9,8 @@ import Fixture from '../base/Fixture.js';
 export default class DataProvider extends Fixture {
     static DEFAULT_USERNAME = 'dummy_automated_tests';
     static SERVICE_USERNAME = 'dummy_services_automated_tests';
+    static PRODUCT_WIDGET = 'product';
+    static CART_WIDGET = 'cart';
 
     /**
      * @param {import('@playwright/test').Page} page
@@ -176,6 +179,7 @@ export default class DataProvider extends Fixture {
                 display: false,
                 priceSel: '',
                 locationSel: '',
+                product: 'i1',
                 paymentMethod: 'Paga Fraccionado',
             },
             productListing: {
@@ -183,6 +187,7 @@ export default class DataProvider extends Fixture {
                 useSelectors: true,
                 priceSel: '',
                 locationSel: '',
+                product: 'i1',
                 paymentMethod: 'Paga Fraccionado',
             },
         }
@@ -203,6 +208,7 @@ export default class DataProvider extends Fixture {
                 customLocations: [
                     {
                         paymentMethod: 'Paga Después',
+                        product: 'i1',
                         display: true,
                         locationSel: '',
                         widgetConfig: '{"alignment":"left","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner","branding":"black"}',
@@ -225,8 +231,8 @@ export default class DataProvider extends Fixture {
      * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only product widget options
      */
-    onlyProductWidgetOptions() {
-        const widgetOptions = this.widgetOptions();
+    onlyProductWidgetOptions(options = {}) {
+        const widgetOptions = this.widgetOptions(options);
         return {
             ...widgetOptions,
             cart: {
@@ -245,8 +251,8 @@ export default class DataProvider extends Fixture {
      * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only cart widget options
      */
-    onlyCartWidgetOptions() {
-        const widgetOptions = this.widgetOptions();
+    onlyCartWidgetOptions(options = {}) {
+        const widgetOptions = this.widgetOptions(options);
         return {
             ...widgetOptions,
             product: {
@@ -265,8 +271,8 @@ export default class DataProvider extends Fixture {
      * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only product listing widget options
      */
-    onlyProductListingWidgetOptions() {
-        const widgetOptions = this.widgetOptions();
+    onlyProductListingWidgetOptions(options = {}) {
+        const widgetOptions = this.widgetOptions(options);
         return {
             ...widgetOptions,
             product: {
@@ -287,18 +293,36 @@ export default class DataProvider extends Fixture {
      * @param {number} amount
      * @param {number|null} registrationAmount
      * @param {Object} options Allows extending the default behavior by defining additional options.
+     * @param {string} options.widgetType Optional. Specifies the widget type in use. Possible values are DataProvider.PRODUCT_WIDGET, DataProvider.CART_WIDGET. Default is DataProvider.PRODUCT_WIDGET.
      * @returns {FrontEndWidgetOptions} Options for the front end widget
      */
     frontEndWidgetOptions = (product, campaign, amount, registrationAmount, options = {}) => {
+        const { widgetType = DataProvider.PRODUCT_WIDGET } = options;
         const widget = this.widgetOptions(options);
-        return {
-            locationSel: widget.product.locationSel,
-            widgetConfig: widget.widgetConfig,
+
+        const commonProps = {
             product: product,
             amount: amount,
             registrationAmount: registrationAmount,
             campaign: campaign
         };
+
+        const customLocation = widget.product.customLocations.find(cl => cl.product === product);
+
+        return ({
+            [DataProvider.PRODUCT_WIDGET]: {
+                ...commonProps,
+                display: customLocation ? customLocation.display : widget.product.display,
+                locationSel: customLocation?.locationSel || widget.product.locationSel,
+                widgetConfig: customLocation?.widgetConfig || widget.widgetConfig
+            },
+            [DataProvider.CART_WIDGET]: {
+                ...commonProps,
+                display: widget.cart.display && product === widget.cart.product,
+                locationSel: widget.cart.locationSel,
+                widgetConfig: widget.widgetConfig
+            }
+        })[widgetType];
     }
 
     /**

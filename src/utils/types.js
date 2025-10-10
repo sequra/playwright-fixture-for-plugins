@@ -2,6 +2,7 @@
 /**
  * @typedef {Object} WidgetOptionsProductCustomLocation
  * @property {string} paymentMethod The payment method for the custom location
+ * @property {string} product The product type for the custom location
  * @property {boolean} display Whether the custom location is displayed
  * @property {string} locationSel The selector for the custom location element in the product page
  * @property {string} widgetConfig The widget configuration for the custom location in the product page
@@ -22,7 +23,8 @@
  * @property {boolean} display Whether the widget is enabled in the cart page
  * @property {string} priceSel The selector for the price element in the cart page
  * @property {string} locationSel The selector for the default location element in the cart page
- * @property {string} paymentMethod The payment method for the cart mini widget
+ * @property {string} paymentMethod The payment method for the cart widget
+ * @property {string} product The product type for the cart widget
  */
 
 /**
