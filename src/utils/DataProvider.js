@@ -158,9 +158,10 @@ export default class DataProvider extends Fixture {
 
     /**
      * Configuration for the widget form. Everything is set to false
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget
      */
-    defaultWidgetOptions() {
+    defaultWidgetOptions(options = {}) {
         return {
             widgetConfig: '{"alignment":"center","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner"}',
             product: {
@@ -189,9 +190,10 @@ export default class DataProvider extends Fixture {
 
     /**
      * Configuration for the widget form with all options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget
      */
-    widgetOptions() {
+    widgetOptions(options = {}) {
         const defaultOptions = this.defaultWidgetOptions();
         return {
             ...defaultOptions,
@@ -220,6 +222,7 @@ export default class DataProvider extends Fixture {
 
     /**
      * Options having only product widget options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only product widget options
      */
     onlyProductWidgetOptions() {
@@ -239,6 +242,7 @@ export default class DataProvider extends Fixture {
 
     /**
      * Options having only cart widget options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only cart widget options
      */
     onlyCartWidgetOptions() {
@@ -258,6 +262,7 @@ export default class DataProvider extends Fixture {
 
     /**
      * Options having only product listing widget options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only product listing widget options
      */
     onlyProductListingWidgetOptions() {
@@ -280,11 +285,12 @@ export default class DataProvider extends Fixture {
      * @param {string} product 
      * @param {string|null} campaign 
      * @param {number} amount
-     * @param {number|null} registrationAmount 
+     * @param {number|null} registrationAmount
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {FrontEndWidgetOptions} Options for the front end widget
      */
-    frontEndWidgetOptions = (product, campaign, amount, registrationAmount) => {
-        const widget = this.widgetOptions();
+    frontEndWidgetOptions = (product, campaign, amount, registrationAmount, options = {}) => {
+        const widget = this.widgetOptions(options);
         return {
             locationSel: widget.product.locationSel,
             widgetConfig: widget.widgetConfig,
@@ -328,7 +334,7 @@ export default class DataProvider extends Fixture {
     */
     cartFrontEndWidgetOptions = (options) => {
         const { amount, registrationAmount } = options;
-        return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount);
+        return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount, options);
     }
 
     /**
