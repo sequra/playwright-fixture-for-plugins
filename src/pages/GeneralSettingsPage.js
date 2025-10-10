@@ -196,12 +196,18 @@ export default class GeneralSettingsPage extends SettingsPage {
     async expectAvailableCountries(options) {
         const { countries } = options;
         const { selectedItem, countriesSelect } = this.locators;
-        let value = '';
+        const codes = [];
         for (const { code, name } of countries) {
-            value += !value ? code : ',' + code;
+            codes.push(code);
             await this.expectToBeVisible(selectedItem(this.page, name), `Country "${name}"`, true);
         }
-        this.expect(countriesSelect(), `"countries-selector" input should have value "${value}"`).toHaveValue(value);
+        // read the value of the hidden input
+        const hiddenInputValue = await countriesSelect().inputValue();
+        // split and sort the values
+        const hiddenInputValues = hiddenInputValue.split(',').sort();
+        codes.sort();
+        // compare the values
+        this.expect(hiddenInputValues, `Countries selector input value should be "${codes.join(',')}"`).toEqual(codes);
     }
 
     /**
