@@ -1,5 +1,4 @@
 import SettingsPage from './SettingsPage.js';
-// import { countries as dataCountries } from './data';
 
 export default class GeneralSettingsPage extends SettingsPage {
 
@@ -196,14 +195,11 @@ export default class GeneralSettingsPage extends SettingsPage {
      */
     async expectAvailableCountries(options) {
         const { countries } = options;
-        const { countryInput, selectedItem, countriesSelect } = this.locators;
+        const { selectedItem, countriesSelect } = this.locators;
         let value = '';
-        for (const { code, name, merchantRef } of countries) {
+        for (const { code, name } of countries) {
             value += !value ? code : ',' + code;
             await this.expectToBeVisible(selectedItem(this.page, name), `Country "${name}"`, true);
-            // const inputLocator = countryInput(code);
-            // await this.expectToBeVisible(inputLocator, `Country Ref input for "${name}"`, true);
-            // await this.expect(inputLocator, `Country Ref input for "${name}" should have value "${merchantRef}"`).toHaveValue(merchantRef);
         }
         this.expect(countriesSelect(), `"countries-selector" input should have value "${value}"`).toHaveValue(value);
     }
@@ -212,13 +208,11 @@ export default class GeneralSettingsPage extends SettingsPage {
       * Fill countries configuration form
       * @param {Object} options
       * @param {Array<Object>} options.countries The countries to select
-      * @param {string} options.countries[].code The country code
       * @param {string} options.countries[].name The country name
-      * @param {Array<string>} options.countries[].merchantRef The merchant reference
       */
     async fillAvailableCountries(options) {
         const { countries } = options;
-        const { countriesMultiSelect, selectedItemRemoveButton, dropdownListVisible, dropdownListItem, countryInput, selectedItem, countriesSelect } = this.locators;
+        const { countriesMultiSelect, selectedItemRemoveButton, dropdownListVisible, dropdownListItem } = this.locators;
         // Clear previous values
         while ((await selectedItemRemoveButton(countriesMultiSelect()).count()) > 0) {
             await selectedItemRemoveButton(countriesMultiSelect()).first().click();
@@ -229,9 +223,8 @@ export default class GeneralSettingsPage extends SettingsPage {
         }
         await countriesMultiSelect().click();
         await dropdownListVisible().waitFor({ timeout: 1000 });
-        for (const { code, name, merchantRef } of countries) {
+        for (const { name } of countries) {
             await dropdownListItem(name).click();
-            // await countryInput(code).fill(merchantRef);
         }
         await this.closeDropdownList(countriesMultiSelect());
     }
