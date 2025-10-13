@@ -137,25 +137,29 @@ export default class CheckoutPage extends Page {
      * @param {string} options.title Payment method title as it appears in the UI
      * @param {string} options.product seQura product (i1, pp3, etc)
      * @param {boolean} options.checked Whether the payment method should be checked
+     * @param {int} options.timeout Timeout for the expectation. Default is 10000 ms.
+     * @return {Promise<void>}
      */
     async expectPaymentMethodToBeVisible(options) {
-        const { title, product } = options;
-        await this.expect(this.locators.paymentMethodInput(options), `"${product}" payment method input should be visible`).toBeVisible({ timeout: 10000 });
-        await this.expect(this.locators.paymentMethodTitle(options), `"${title}" payment method should be visible`).toBeVisible({ timeout: 10000 });
+        const { title, product, timeout = 10000 } = options;
+        await this.expect(this.locators.paymentMethodInput(options), `"${product}" payment method input should be visible`).toBeVisible({ timeout });
+        await this.expect(this.locators.paymentMethodTitle(options), `"${title}" payment method should be visible`).toBeVisible({ timeout });
     }
 
     /**
      * Expect at least one SeQura payment method to be available or not
      * @param {object} options 
      * @param {boolean} options.available Whether the payment methods should be available
+     * @param {int} options.timeout Timeout for the expectation. Default is 10000 ms.
+     * @returns {Promise<void>}
      */
     async expectAnyPaymentMethod(options = { available: true }) {
-        const { available = true } = options || {};
+        const { available = true, timeout = 10000 } = options || {};
         const locator = this.locators.paymentMethods(options);
         if (available) {
-            await this.expect(locator.first(), `"seQura payment methods should be available`).toBeVisible({ timeout: 10000 });
+            await this.expect(locator.first(), `"seQura payment methods should be available`).toBeVisible({ timeout });
         } else {
-            await this.expect(locator, `"seQura payment methods should not be available`).toHaveCount(0, { timeout: 10000 });
+            await this.expect(locator, `"seQura payment methods should not be available`).toHaveCount(0, { timeout });
         }
     }
 
