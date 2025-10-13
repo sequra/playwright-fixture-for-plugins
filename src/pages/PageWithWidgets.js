@@ -71,9 +71,11 @@ export default class PageWithWidgets extends Page {
      * Expect the widget to be visible
      * 
      * @param {FrontEndWidgetOptions} options
+     * @param {number} options.timeout Timeout for the expectation. Default is 30000 ms.
      */
     async expectWidgetToBeVisible(options) {
-        await this.locators.widgetIframe(options).waitFor();
+        const { timeout = 30000 } = options;
+        await this.locators.widgetIframe(options).waitFor({ state: 'visible', timeout });
     }
 
     /**
