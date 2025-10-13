@@ -214,7 +214,7 @@ export default class GeneralSettingsPage extends SettingsPage {
      * @param {string} options.defaultServicesEndDate Default services end date value. Default is 'P1Y'.
      * @returns {Promise<void>}
      */
-    async expectServicesConfiguration(options) {
+    async expectServicesConfiguration(options = {}) {
         const { enabledForServices = [], allowRegistrationItems = [], allowFirstServicePaymentDelay = [], defaultServicesEndDate = 'P1Y' } = options;
         const { enabledForServicesToggle, allowFirstServicePaymentDelayToggle, allowRegistrationItemsToggle, defaultServicesEndDateInput } = this.locators;
         const enabled = enabledForServices.length > 0;
