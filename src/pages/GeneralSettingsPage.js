@@ -34,9 +34,9 @@ export default class GeneralSettingsPage extends SettingsPage {
             excludedProductsHiddenInput: () => this.locators.excludedProducts().locator('.sqp-hidden-input'),
             excludedCategories: () => this.page.locator('.sq-field-wrapper').filter({ hasText: 'Excluded categories' }).first().locator('.sq-label-wrapper + div').first(),
             excludedCategoriesHiddenInput: () => this.locators.excludedCategories().locator('.sqp-hidden-input').first(),
-            enabledForServicesToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Enabled for services' }), locate),
-            allowFirstServicePaymentDelayToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Allow first service payment delay' }), locate),
-            allowRegistrationItemsToggle: (locate = 'input') => this.locators.toggle(this.page.getByRole('heading', { name: 'Allow registration items' }), locate),
+            enabledForServicesToggle: (locate = 'input') => this.locators.toggle(this.page.locator('.sq-field-enabled-for-services'), locate),
+            allowFirstServicePaymentDelayToggle: (locate = 'input') => this.locators.toggle(this.page.locator('.sq-field-allow-first-service-payment-delay'), locate),
+            allowRegistrationItemsToggle: (locate = 'input') => this.locators.toggle(this.page.locator('.sq-field-allow-service-registration-items'), locate),
             defaultServicesEndDateInput: () => this.page.locator('.sq-text-input.sq-default-services-end-date'),
             countryInput: code => this.page.locator(`[name="country_${code}"]`),
             countryInputError: () => this.page.locator('.sq-country-field-wrapper .sqp-input-error').filter({ hasText: 'This field is invalid.' })
@@ -135,43 +135,6 @@ export default class GeneralSettingsPage extends SettingsPage {
     }
 
     /**
-     * @param {object} options
-     * @param {boolean} options.enabled 
-     */
-    async expectEnabledForServicesToBe(options) {
-        const { enabled } = options;
-        await this.expectToBeChecked(this.locators.enabledForServicesToggle(), '"Enable for service" toggle', enabled);
-        await this.expectToBeVisible(this.locators.allowFirstServicePaymentDelayToggle('label'), '"Allow First Service Payment Delay" toggle', enabled);
-        await this.expectToBeVisible(this.locators.allowRegistrationItemsToggle('label'), '"Allow registration items" toggle', enabled);
-        await this.expectToBeVisible(this.locators.defaultServicesEndDateInput(), '"Default services end date" input', enabled);
-    }
-
-    /**
-     * @param {object} options 
-     * @param {boolean} options.enabled
-     */
-    async setEnabledForServices(options) {
-        await this.setToggle(options, this.locators.enabledForServicesToggle, 'Enable for services');
-        await this.expectEnabledForServicesToBe(options);
-    }
-
-    /**
-     * @param {object} options 
-     * @param {boolean} options.enabled 
-     */
-    async setAllowFirstServicePaymentDelay(options) {
-        this.setToggle(options, this.locators.allowFirstServicePaymentDelayToggle, 'Allow First Service Payment Delay');
-    }
-
-    /**
-     * @param {object} options 
-     * @param {boolean} options.enabled 
-     */
-    async setAllowRegistrationItems(options) {
-        this.setToggle(options, this.locators.allowRegistrationItemsToggle, 'Allow Registration Items');
-    }
-
-    /**
      * @param {string} value 
      */
     async fillDefaultServicesEndDate(value) {
@@ -239,5 +202,30 @@ export default class GeneralSettingsPage extends SettingsPage {
      */
     async expectCountryInputErrorToBeVisible() {
         await this.expectToBeVisible(this.locators.countryInputError(), 'Country input error', true);
+    }
+
+    /**
+     * Expect services configuration to be set
+     * 
+     * @param {Object} options
+     * @param {Array<string>} options.enabledForServices Countries codes where services that should be enabled. Default is [].
+     * @param {Array<string>} options.allowRegistrationItems Countries codes where registration items should be allowed. Default is [].
+     * @param {Array<string>} options.allowFirstServicePaymentDelay Countries codes where first service payment delay should be allowed. Default is [].
+     * @param {string} options.defaultServicesEndDate Default services end date value. Default is 'P1Y'.
+     * @returns {Promise<void>}
+     */
+    async expectServicesConfiguration(options) {
+        const { enabledForServices = [], allowRegistrationItems = [], allowFirstServicePaymentDelay = [], defaultServicesEndDate = 'P1Y' } = options;
+        const { enabledForServicesToggle, allowFirstServicePaymentDelayToggle, allowRegistrationItemsToggle, defaultServicesEndDateInput } = this.locators;
+        const enabled = enabledForServices.length > 0;
+        await this.expectToBeChecked(enabledForServicesToggle(), '"Enable for service" toggle', enabled);
+        await this.expectToBeVisible(allowFirstServicePaymentDelayToggle('label'), '"Allow First Service Payment Delay" toggle', enabled);
+        await this.expectToBeVisible(allowRegistrationItemsToggle('label'), '"Allow registration items" toggle', enabled);
+        await this.expectToBeVisible(defaultServicesEndDateInput(), '"Default services end date" input', enabled);
+        if( enabled ) {
+            await this.expectToBeChecked(allowFirstServicePaymentDelayToggle(), '"Allow First Service Payment Delay" toggle', enabled && allowFirstServicePaymentDelay.length > 0);
+            await this.expectToBeChecked(allowRegistrationItemsToggle(), '"Allow registration items" toggle', enabled && allowRegistrationItems.length > 0);
+            await this.expect(defaultServicesEndDateInput(), '"Default services end date" input').toHaveValue(defaultServicesEndDate);
+        }
     }
 }
