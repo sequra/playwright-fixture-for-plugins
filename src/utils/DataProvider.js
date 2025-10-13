@@ -352,13 +352,15 @@ export default class DataProvider extends Fixture {
     /**
      * Options for the cart widget
     * @param {Object} options Additional options to configure the widget
+    * @param {string} options.product SeQura product. Optional. Default is 'pp3'
+    * @param {string|null} options.campaign Campaign identifier. Optional. Default is null
     * @param {number} options.amount cart amount
     * @param {number|null} options.registrationAmount registration amount
     * @returns {FrontEndWidgetOptions} Options for the cart widget
     */
     cartFrontEndWidgetOptions = (options) => {
-        const { amount, registrationAmount } = options;
-        return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount, options);
+        const { product = 'pp3', campaign = null, amount, registrationAmount } = options;
+        return this.frontEndWidgetOptions(product, campaign, amount, registrationAmount, {...options, widgetType: DataProvider.CART_WIDGET});
     }
 
     /**
