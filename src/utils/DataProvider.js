@@ -179,7 +179,7 @@ export default class DataProvider extends Fixture {
                 display: false,
                 priceSel: '',
                 locationSel: '',
-                product: 'i1',
+                product: 'pp3',
                 paymentMethod: 'Paga Fraccionado',
             },
             productListing: {
@@ -187,7 +187,7 @@ export default class DataProvider extends Fixture {
                 useSelectors: true,
                 priceSel: '',
                 locationSel: '',
-                product: 'i1',
+                product: 'pp3',
                 paymentMethod: 'Paga Fraccionado',
             },
         }
