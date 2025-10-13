@@ -96,12 +96,15 @@ export default class SettingsPage extends Page {
     /**
      * Expect the loading spinner to show and hide
      * 
+     * @param {Object} options Additional options
+     * @param {string} options.state State to wait for. Default is 'attached'.
+     * @param {number} options.timeout Timeout for the wait. Default is 30000 ms.
      * @returns {Promise<void>}
      */
-    async expectLoadingShowAndHide() {
-        const options = { state: 'attached', timeout: 10000 };
-        await this.locators.pageLoader(false).waitFor(options);
-        await this.locators.pageLoader(true).waitFor(options);
+    async expectLoadingShowAndHide(options = {}) {
+        const { state = 'attached', timeout = 30000 } = options;
+        await this.locators.pageLoader(false).waitFor({ state, timeout });
+        await this.locators.pageLoader(true).waitFor({ state, timeout });
     }
 
     /**
