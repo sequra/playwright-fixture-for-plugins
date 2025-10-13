@@ -139,8 +139,8 @@ export default class GeneralSettingsPage extends SettingsPage {
      */
     async fillDefaultServicesEndDate(value) {
         const { defaultServicesEndDateInput } = this.locators;
-        await defaultServicesEndDateInput.fill(value);
-        await defaultServicesEndDateInput.blur();
+        await defaultServicesEndDateInput().fill(value);
+        await defaultServicesEndDateInput().blur();
     }
 
     /**
