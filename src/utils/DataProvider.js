@@ -327,7 +327,7 @@ export default class DataProvider extends Fixture {
 
     /**
      * @param {Object} options Additional options to configure the widget
-     * @returns {FrontEndWidgetOptions} Options for the i1 widget
+     * @returns {FrontEndWidgetOptions} Options for the pp3 widget
      */
     pp3FrontEndWidgetOptions = (options = {}) => {
         throw new Error(`Unimplemented method "pp3FrontEndWidgetOptions"`);
