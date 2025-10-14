@@ -1,4 +1,3 @@
-import { act } from 'react';
 import SettingsPage from './SettingsPage.js';
 
 export default class GeneralSettingsPage extends SettingsPage {
