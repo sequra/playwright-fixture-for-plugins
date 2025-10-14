@@ -221,7 +221,7 @@ export default class GeneralSettingsPage extends SettingsPage {
         await this.expectToBeVisible(allowFirstServicePaymentDelayToggle('label'), '"Allow First Service Payment Delay" toggle', enabled);
         await this.expectToBeVisible(allowRegistrationItemsToggle('label'), '"Allow registration items" toggle', enabled);
         await this.expectToBeVisible(defaultServicesEndDateInput(), '"Default services end date" input', enabled);
-        if( enabled ) {
+        if ( enabled ) {
             await this.expectToBeChecked(allowFirstServicePaymentDelayToggle(), '"Allow First Service Payment Delay" toggle', enabled && allowFirstServicePaymentDelay.length > 0);
             await this.expectToBeChecked(allowRegistrationItemsToggle(), '"Allow registration items" toggle', enabled && allowRegistrationItems.length > 0);
             await this.expect(defaultServicesEndDateInput(), '"Default services end date" input').toHaveValue(defaultServicesEndDate);
