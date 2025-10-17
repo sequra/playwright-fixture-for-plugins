@@ -1,11 +1,17 @@
 import Fixture from '../base/Fixture.js';
 /** @typedef {import('./types.js').WidgetOptions} WidgetOptions */
 /** @typedef {import('./types.js').DeploymentTargetOptions} DeploymentTargetOptions */
+/** @typedef {import('./types.js').FrontEndWidgetOptions} FrontEndWidgetOptions */
 
 /**
  * Provide data for the tests
  */
 export default class DataProvider extends Fixture {
+    static DEFAULT_USERNAME = 'dummy_automated_tests';
+    static SERVICE_USERNAME = 'dummy_services_automated_tests';
+    static PRODUCT_WIDGET = 'product';
+    static CART_WIDGET = 'cart';
+
     /**
      * @param {import('@playwright/test').Page} page
      * @param {string} baseURL
@@ -19,12 +25,12 @@ export default class DataProvider extends Fixture {
 
     /**
      * Data for PaymentMethodsSettingsPage
-     * @param {string} merchantRef Options: dummy_automated_tests
+     * @param {string} username Options: DataProvider.DEFAULT_USERNAME
      * @returns {Array<Object>}
      */
-    countriesPaymentMethods(merchantRef = 'dummy_automated_tests') {
-        switch (merchantRef) {
-            case 'dummy_automated_tests':
+    countriesPaymentMethods(username = DataProvider.DEFAULT_USERNAME) {
+        switch (username) {
+            case DataProvider.DEFAULT_USERNAME:
                 return [
                     { name: 'France', paymentMethods: ['Payez en plusieurs fois'] },
                     { name: 'Spain', paymentMethods: ['Paga Después', 'Divide tu pago en 3', 'Paga Fraccionado'] },
@@ -32,23 +38,27 @@ export default class DataProvider extends Fixture {
                     { name: 'Portugal', paymentMethods: ['Pagamento Fracionado'] }
                 ];
             default:
-                throw new Error(`Invalid merchant reference "${merchantRef}"`);
+                throw new Error(`Invalid username "${username}"`);
         }
     }
 
     /**
      * Data for PaymentMethodsSettingsPage
-     * @param {string} username Options: dummy_automated_tests
+     * @param {string} username Options: DataProvider.DEFAULT_USERNAME, DataProvider.SERVICE_USERNAME
      * @returns {Array<Object>}
      */
-    countriesMerchantRefs(username = 'dummy_automated_tests') {
+    countriesMerchantRefs(username = DataProvider.DEFAULT_USERNAME) {
         switch (username) {
-            case 'dummy_automated_tests':
+            case DataProvider.DEFAULT_USERNAME:
                 return [
                     { code: 'FR', name: 'France', merchantRef: 'dummy_automated_tests_fr' },
-                    { code: 'ES', name: 'Spain', merchantRef: 'dummy_automated_tests' },
+                    { code: 'ES', name: 'Spain', merchantRef: DataProvider.DEFAULT_USERNAME },
                     { code: 'IT', name: 'Italy', merchantRef: 'dummy_automated_tests_it' },
                     { code: 'PT', name: 'Portugal', merchantRef: 'dummy_automated_tests_pt' }
+                ];
+            case DataProvider.SERVICE_USERNAME:
+                return [
+                    { code: 'ES', name: 'Spain', merchantRef: DataProvider.SERVICE_USERNAME }
                 ];
             default:
                 throw new Error(`Invalid username "${username}"`);
@@ -82,6 +92,7 @@ export default class DataProvider extends Fixture {
                 number: '4716773077339777',
                 exp: '12/30',
                 cvc: '123',
+                name: 'SEQURA TEST'
             },
             otp: ['6', '6', '6', '6', '6']
         };
@@ -122,12 +133,12 @@ export default class DataProvider extends Fixture {
     /**
      * Checkout payment methods
      * 
-     * @param {string} merchantRef 
+     * @param {string} merchantRef By default, it uses DataProvider.DEFAULT_USERNAME
      * @returns {Array<Object>} 
      */
-    checkoutPaymentMethods(merchantRef = 'dummy_automated_tests') {
+    checkoutPaymentMethods(merchantRef = DataProvider.DEFAULT_USERNAME) {
         switch (merchantRef) {
-            case 'dummy_automated_tests':
+            case DataProvider.DEFAULT_USERNAME:
                 return [
                     { title: 'Recibe tu compra antes de pagar', product: 'i1', checked: false },
                     { title: 'Divide en 3 partes de ', product: 'sp1', checked: false },
@@ -150,9 +161,10 @@ export default class DataProvider extends Fixture {
 
     /**
      * Configuration for the widget form. Everything is set to false
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget
      */
-    defaultWidgetOptions() {
+    defaultWidgetOptions(options = {}) {
         return {
             widgetConfig: '{"alignment":"center","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner"}',
             product: {
@@ -167,6 +179,7 @@ export default class DataProvider extends Fixture {
                 display: false,
                 priceSel: '',
                 locationSel: '',
+                product: 'pp3',
                 paymentMethod: 'Paga Fraccionado',
             },
             productListing: {
@@ -174,6 +187,7 @@ export default class DataProvider extends Fixture {
                 useSelectors: true,
                 priceSel: '',
                 locationSel: '',
+                product: 'pp3',
                 paymentMethod: 'Paga Fraccionado',
             },
         }
@@ -181,9 +195,10 @@ export default class DataProvider extends Fixture {
 
     /**
      * Configuration for the widget form with all options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget
      */
-    widgetOptions() {
+    widgetOptions(options = {}) {
         const defaultOptions = this.defaultWidgetOptions();
         return {
             ...defaultOptions,
@@ -193,6 +208,7 @@ export default class DataProvider extends Fixture {
                 customLocations: [
                     {
                         paymentMethod: 'Paga Después',
+                        product: 'i1',
                         display: true,
                         locationSel: '',
                         widgetConfig: '{"alignment":"left","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner","branding":"black"}',
@@ -212,10 +228,11 @@ export default class DataProvider extends Fixture {
 
     /**
      * Options having only product widget options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only product widget options
      */
-    onlyProductWidgetOptions() {
-        const widgetOptions = this.widgetOptions();
+    onlyProductWidgetOptions(options = {}) {
+        const widgetOptions = this.widgetOptions(options);
         return {
             ...widgetOptions,
             cart: {
@@ -231,10 +248,11 @@ export default class DataProvider extends Fixture {
 
     /**
      * Options having only cart widget options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only cart widget options
      */
-    onlyCartWidgetOptions() {
-        const widgetOptions = this.widgetOptions();
+    onlyCartWidgetOptions(options = {}) {
+        const widgetOptions = this.widgetOptions(options);
         return {
             ...widgetOptions,
             product: {
@@ -250,10 +268,11 @@ export default class DataProvider extends Fixture {
 
     /**
      * Options having only product listing widget options enabled
+     * @param {Object} options Allows extending the default behavior by defining additional options.
      * @returns {WidgetOptions} Configuration for the widget with only product listing widget options
      */
-    onlyProductListingWidgetOptions() {
-        const widgetOptions = this.widgetOptions();
+    onlyProductListingWidgetOptions(options = {}) {
+        const widgetOptions = this.widgetOptions(options);
         return {
             ...widgetOptions,
             product: {
@@ -272,24 +291,43 @@ export default class DataProvider extends Fixture {
      * @param {string} product 
      * @param {string|null} campaign 
      * @param {number} amount
-     * @param {number|null} registrationAmount 
+     * @param {number|null} registrationAmount
+     * @param {Object} options Allows extending the default behavior by defining additional options.
+     * @param {string} options.widgetType Optional. Specifies the widget type in use. Possible values are DataProvider.PRODUCT_WIDGET, DataProvider.CART_WIDGET. Default is DataProvider.PRODUCT_WIDGET.
      * @returns {FrontEndWidgetOptions} Options for the front end widget
      */
-    frontEndWidgetOptions = (product, campaign, amount, registrationAmount) => {
-        const widget = this.widgetOptions();
-        return {
-            locationSel: widget.product.locationSel,
-            widgetConfig: widget.widgetConfig,
+    frontEndWidgetOptions = (product, campaign, amount, registrationAmount, options = {}) => {
+        const { widgetType = DataProvider.PRODUCT_WIDGET } = options;
+        const widget = this.widgetOptions(options);
+
+        const commonProps = {
             product: product,
             amount: amount,
             registrationAmount: registrationAmount,
             campaign: campaign
         };
+
+        const customLocation = widget.product.customLocations.find(cl => cl.product === product);
+
+        return ({
+            [DataProvider.PRODUCT_WIDGET]: {
+                ...commonProps,
+                display: customLocation ? customLocation.display : widget.product.display,
+                locationSel: customLocation?.locationSel || widget.product.locationSel,
+                widgetConfig: customLocation?.widgetConfig || widget.widgetConfig
+            },
+            [DataProvider.CART_WIDGET]: {
+                ...commonProps,
+                display: widget.cart.display && product === widget.cart.product,
+                locationSel: widget.cart.locationSel,
+                widgetConfig: widget.widgetConfig
+            }
+        })[widgetType];
     }
 
     /**
      * @param {Object} options Additional options to configure the widget
-     * @returns {FrontEndWidgetOptions} Options for the i1 widget
+     * @returns {FrontEndWidgetOptions} Options for the pp3 widget
      */
     pp3FrontEndWidgetOptions = (options = {}) => {
         throw new Error(`Unimplemented method "pp3FrontEndWidgetOptions"`);
@@ -314,13 +352,15 @@ export default class DataProvider extends Fixture {
     /**
      * Options for the cart widget
     * @param {Object} options Additional options to configure the widget
+    * @param {string} options.product SeQura product. Optional. Default is 'pp3'
+    * @param {string|null} options.campaign Campaign identifier. Optional. Default is null
     * @param {number} options.amount cart amount
     * @param {number|null} options.registrationAmount registration amount
     * @returns {FrontEndWidgetOptions} Options for the cart widget
     */
     cartFrontEndWidgetOptions = (options) => {
-        const { amount, registrationAmount } = options;
-        return this.frontEndWidgetOptions('pp3', null, amount, registrationAmount);
+        const { product = 'pp3', campaign = null, amount, registrationAmount } = options;
+        return this.frontEndWidgetOptions(product, campaign, amount, registrationAmount, {...options, widgetType: DataProvider.CART_WIDGET});
     }
 
     /**

@@ -1,5 +1,7 @@
 import Fixture from '../base/Fixture.js';
 
+/** @typedef {import('../utils/types.js').WebhookOption} WebhookOption */
+
 /**
  * Allow interaction with the seQura helper module backend
  */
@@ -28,9 +30,7 @@ export default class SeQuraHelper extends Fixture {
     /**
      * Prepare the URL to use
      * 
-     * @param {Object} options Additional options
-     * @param {string} options.webhook The webhook
-     * @param {Array<Object>} options.args The arguments to pass to the webhook. Each argument is an object with `name` and `value` properties
+     * @param {WebhookOption} options Additional options
      * @returns {string} The URL to use
      */
     getWebhookUrl(options = { webhook, args: [] }) {
@@ -51,13 +51,11 @@ export default class SeQuraHelper extends Fixture {
     /**
     * Do a webhook request
     * 
-    * @param {Object} options
-    * @param {string} options.webhook The webhook to execute
-    * @param {Array<Object>} options.args The arguments to pass to the webhook. Each argument is an object with `name` and `value` properties
+    * @param {WebhookOption} options The webhook options
     * @returns {Promise<void>}
     */
     async executeWebhook(options = { webhook, args: [] }) {
-        const { webhook, args } = options;
+        const { webhook, args = [] } = options;
         if (!this.webhooks[webhook]) {
             throw new Error(`Webhook "${webhook}" not found`);
         }
@@ -68,6 +66,19 @@ export default class SeQuraHelper extends Fixture {
         } catch (e) {
             console.log(webhook, args, e);
             throw e;
+        }
+    }
+
+    /**
+     * Execute multiple webhooks sequentially
+     *
+     * @param {Array<WebhookOption>} webhooks The webhooks to execute.
+     * @returns {Promise<void>}
+     */
+    async executeWebhooksSequentially(webhooks = []) {
+        for (const webhookOptions of webhooks) {
+            // eslint-disable-next-line no-await-in-loop
+            await this.executeWebhook(webhookOptions);
         }
     }
 }

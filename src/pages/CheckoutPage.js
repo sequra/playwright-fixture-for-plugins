@@ -23,19 +23,23 @@ export default class CheckoutPage extends Page {
             sqDateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             sqNin: iframe => iframe.locator('[name="nin"]'),
             sqAcceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
+            sqAcceptServiceDuration: iframe => iframe.locator('#sequra_service_duration_accepted'),
             sqIframeBtn: iframe => iframe.locator('.actions-section button:not([disabled])'),
             sqOtp1: iframe => iframe.locator('[aria-label="Please enter OTP character 1"]'),
             sqOtp2: iframe => iframe.locator('[aria-label="Please enter OTP character 2"]'),
             sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
             sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
             sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
+            sqNewCreditCardButton: iframe => iframe.locator('.reuse-card-component .PaymentMethodsSelectionSection__actionsSection > .tlr-Button___tertiary_j9CJ-'),
             sqIframeCreditCard: iframe => iframe.frameLocator('#mufasa-iframe'),
+            sqCCName: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cardholder_name'),
             sqCCNumber: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-number'),
             sqCCExp: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-exp'),
             sqCCCsc: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-csc'),
             sqPaymentButton: iframe => iframe.locator('.payment-btn-container button:not([disabled])'),
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
+            occupationSelect: iframe => iframe.locator('#occupation'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
             moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
             moreInfoLink: options => this.moreInfoLinkLocator(options)
@@ -46,11 +50,13 @@ export default class CheckoutPage extends Page {
      * Navigate to the page
      * 
      * @param {Object} options Additional options
+     * @param {boolean} options.force Whether to force navigation even if we are already on the page
      * @returns {Promise<void>}
      */
-    async goto(options = {}) {
-        const url = this.checkoutUrl(options);
-        if (this.page.url() === url) {
+    async goto(options = { force: false }) {
+        const opt = { force: false, ...options };
+        const url = this.checkoutUrl(opt);
+        if (!opt.force && this.page.url() === url) {
             // Do not reload the page if we are already on the checkout page
             return;
         }
@@ -131,25 +137,29 @@ export default class CheckoutPage extends Page {
      * @param {string} options.title Payment method title as it appears in the UI
      * @param {string} options.product seQura product (i1, pp3, etc)
      * @param {boolean} options.checked Whether the payment method should be checked
+     * @param {int} options.timeout Timeout for the expectation. Default is 10000 ms.
+     * @return {Promise<void>}
      */
     async expectPaymentMethodToBeVisible(options) {
-        const { title, product } = options;
-        await this.expect(this.locators.paymentMethodInput(options), `"${product}" payment method input should be visible`).toBeVisible({ timeout: 10000 });
-        await this.expect(this.locators.paymentMethodTitle(options), `"${title}" payment method should be visible`).toBeVisible({ timeout: 10000 });
+        const { title, product, timeout = 10000 } = options;
+        await this.expect(this.locators.paymentMethodInput(options), `"${product}" payment method input should be visible`).toBeVisible({ timeout });
+        await this.expect(this.locators.paymentMethodTitle(options), `"${title}" payment method should be visible`).toBeVisible({ timeout });
     }
 
     /**
      * Expect at least one SeQura payment method to be available or not
      * @param {object} options 
      * @param {boolean} options.available Whether the payment methods should be available
+     * @param {int} options.timeout Timeout for the expectation. Default is 10000 ms.
+     * @returns {Promise<void>}
      */
     async expectAnyPaymentMethod(options = { available: true }) {
-        const { available = true } = options || {};
+        const { available = true, timeout = 10000 } = options || {};
         const locator = this.locators.paymentMethods(options);
         if (available) {
-            await this.expect(locator.first(), `"seQura payment methods should be available`).toBeVisible({ timeout: 10000 });
+            await this.expect(locator.first(), `"seQura payment methods should be available`).toBeVisible({ timeout });
         } else {
-            await this.expect(locator, `"seQura payment methods should not be available`).toHaveCount(0, { timeout: 10000 });
+            await this.expect(locator, `"seQura payment methods should not be available`).toHaveCount(0, { timeout });
         }
     }
 
@@ -174,11 +184,23 @@ export default class CheckoutPage extends Page {
      */
     async fillCreditCard(iframe, options) {
         const { creditCard } = options;
-        const { sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton } = this.locators;
+        const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton, sqNewCreditCardButton } = this.locators;
+
+        try {
+            // Click the new credit card button if present.
+            await sqNewCreditCardButton(iframe).click({ timeout: 3000 });
+        } catch (e) {
+            // Do nothing, the button is not visible
+        }
+
         await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
         await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
         await sqCCExp(iframe).pressSequentially(creditCard.exp, { delay: 100 });
         await sqCCCsc(iframe).pressSequentially(creditCard.cvc, { delay: 100 });
+        // Check if cardholder name field is present and fill it if so
+        if (await sqCCName(iframe).count() > 0) {
+            await sqCCName(iframe).pressSequentially(creditCard.name, { delay: 100 });
+        }
         await sqPaymentButton(iframe).click();
     }
 
@@ -221,6 +243,10 @@ export default class CheckoutPage extends Page {
         await this.locators.sqNin(iframe).click();
         await this.locators.sqNin(iframe).pressSequentially(nin);
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
+        // Accept service duration if the checkbox is present.
+        if (await this.locators.sqAcceptServiceDuration(iframe).count() > 0) {
+            await this.locators.sqAcceptServiceDuration(iframe).click();
+        }
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
     }
@@ -235,11 +261,24 @@ export default class CheckoutPage extends Page {
         await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
         await this.locators.sqNin(iframe).click();
         await this.locators.sqNin(iframe).pressSequentially(nin);
-        // Select Monthly income and Fixed monthly fees
-        await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
-        await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+        // Select monthly income. This field might not be present in some countries
+        if (await this.locators.monthlyIncomeSelect(iframe).count() > 0) {
+            await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
+        }
+        // Select monthly fixed expenses. This field might not be present in some countries
+        if (await this.locators.monthlyFixedExpensesSelect(iframe).count() > 0) {
+            await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+        }
+        // Select occupation. This field might not be present in some countries
+        if (await this.locators.occupationSelect(iframe).count() > 0) {
+            await this.locators.occupationSelect(iframe).selectOption({ value: 'unemployed' });
+        }
 
         await this.locators.sqAcceptPrivacyPolicy(iframe).click();
+        // Accept service duration if the checkbox is present.
+        if (await this.locators.sqAcceptServiceDuration(iframe).count() > 0) {
+            await this.locators.sqAcceptServiceDuration(iframe).click();
+        }
         await this.locators.sqIframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
         await this.fillCreditCard(iframe, options);
@@ -353,10 +392,14 @@ export default class CheckoutPage extends Page {
      * @param {SeQuraHelper} helper The back office helper instance
      * @param {DataProvider} dataProvider The data provider instance
      * @param {Object} options Additional options if needed
+     * @param {boolean} options.isOrderForService Whether the order is for a service
      * @returns {Promise<void>}
      */
     async expectOrderHasTheCorrectMerchantId(country, helper, dataProvider, options = {}) {
-        const merchantId = dataProvider.countriesMerchantRefs().filter(c => c.code === country)[0].merchantRef;
+        const { isOrderForService = false } = options;
+        const merchantId = dataProvider.countriesMerchantRefs(
+            isOrderForService ? DataProvider.SERVICE_USERNAME : DataProvider.DEFAULT_USERNAME
+        ).filter(c => c.code === country)[0].merchantRef;
         const orderNumber = await this.getOrderNumber();
         await helper.executeWebhook({
             webhook: helper.webhooks.verify_order_has_merchant_id, args: [

@@ -96,12 +96,15 @@ export default class SettingsPage extends Page {
     /**
      * Expect the loading spinner to show and hide
      * 
+     * @param {Object} options Additional options
+     * @param {string} options.state State to wait for. Default is 'attached'.
+     * @param {number} options.timeout Timeout for the wait. Default is 30000 ms.
      * @returns {Promise<void>}
      */
-    async expectLoadingShowAndHide() {
-        const options = { state: 'attached', timeout: 10000 };
-        await this.locators.pageLoader(false).waitFor(options);
-        await this.locators.pageLoader(true).waitFor(options);
+    async expectLoadingShowAndHide(options = {}) {
+        const { state = 'attached', timeout = 30000 } = options;
+        await this.locators.pageLoader(false).waitFor({ state, timeout });
+        await this.locators.pageLoader(true).waitFor({ state, timeout });
     }
 
     /**
@@ -184,6 +187,7 @@ export default class SettingsPage extends Page {
      * @param {function} locator Must return a locator and receive an optional parameter locate with the value 'label' or 'input'
      * @param {*} fieldName The name of the field
      * @param {number} timeout Timeout for the expectation. Default is null, which means default timeout will be used.
+     * @returns {Promise<void>}
      */
     async setToggle(options, locator, fieldName, timeout = null) {
         const { enabled } = options;
@@ -194,6 +198,7 @@ export default class SettingsPage extends Page {
     /**
      * Close open dropdown
      * @param {import('@playwright/test').Locator} locator Dropdown locator
+     * @returns {Promise<void>}
      */
     async closeDropdownList(locator) {
         await this.locators.dropdownListVisible().waitFor({ state: 'visible', timeout: 5000 });

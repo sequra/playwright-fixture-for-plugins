@@ -71,9 +71,11 @@ export default class PageWithWidgets extends Page {
      * Expect the widget to be visible
      * 
      * @param {FrontEndWidgetOptions} options
+     * @param {number} options.timeout Timeout for the expectation. Default is 30000 ms.
      */
     async expectWidgetToBeVisible(options) {
-        await this.locators.widgetIframe(options).waitFor();
+        const { timeout = 30000 } = options;
+        await this.locators.widgetIframe(options).waitFor({ state: 'visible', timeout });
     }
 
     /**
@@ -90,9 +92,18 @@ export default class PageWithWidgets extends Page {
      * 
      * @param {string} product Product name, e.g. 'pp3', 'sp1', etc.
      * @param {Object} options Additional options for the locator
+     * @param {number} secondsToWait Number of seconds to wait for the mini widget to be visible. Default is 5 seconds.
+     * @returns {Promise<void>}
      */
-    async expectAnyVisibleMiniWidget(product, options = null) {
-        await this.locators.miniWidget(product, options).first().waitFor({ state: 'visible' });
+    async expectAnyVisibleMiniWidget(product, options = null, secondsToWait = 5) {
+         for (let i = 0; i < secondsToWait; i++) {
+            await this.page.waitForTimeout(1000);
+            const count = await this.locators.miniWidget(product, options).count();
+            if (count > 0) {
+                return;
+            }
+        }
+        throw new Error(`No visible mini widget found for product: ${product}`);
     }
 
     /**
@@ -100,8 +111,16 @@ export default class PageWithWidgets extends Page {
      * 
      * @param {string} product Product name, e.g. 'pp3', 'sp1', etc.
      * @param {Object} options Additional options for the locator
+     * @param {number} secondsToWait Number of seconds to wait for the mini widget to be not visible. Default is 5 seconds.
+     * @return {Promise<void>}
      */
-    async expectMiniWidgetsNotToBeVisible(product, options = null) {
-        await this.expect(this.locators.miniWidget(product, options)).toHaveCount(0);
+    async expectMiniWidgetsNotToBeVisible(product, options = null, secondsToWait = 5) {
+        for (let i = 0; i < secondsToWait; i++) {
+            await this.page.waitForTimeout(1000);
+            const count = await this.locators.miniWidget(product, options).count();
+            if (count !== 0) {
+                throw new Error(`Mini widget still visible for product: ${product}`);
+            }
+        }
     }
 }

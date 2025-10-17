@@ -23,7 +23,7 @@ export default class ConnectionSettingsPage extends SettingsPage {
     initLocators() {
         return {
             ...super.initLocators(),
-            modalConfirmButton: () => this.page.locator('#sq-modal .sq-button.sqt--primary'),
+            modalConfirmButton: () => this.page.locator('#sq-modal .sq-button.sqt--primary,#sq-modal .sqt--danger').first(),
             disconnect: () => this.page.getByRole('button', { name: 'Disconnect' }),
             envOption: (locate = 'input', env = 'sandbox') => {
                 let selector = `[type="radio"][value="${env}"]`;
