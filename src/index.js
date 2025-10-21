@@ -8,6 +8,7 @@ export { default as SettingsPage } from './pages/SettingsPage.js';
 export { default as PaymentMethodsSettingsPage } from './pages/PaymentMethodsSettingsPage.js';
 export { default as ProductPage } from './pages/ProductPage.js';
 export { default as CheckoutPage } from './pages/CheckoutPage.js';
+export { default as SeQuraCheckoutForm } from './base/SeQuraCheckoutForm.js';
 export { default as OnboardingSettingsPage } from './pages/OnboardingSettingsPage.js';
 export { default as GeneralSettingsPage } from './pages/GeneralSettingsPage.js';
 export { default as ConnectionSettingsPage } from './pages/ConnectionSettingsPage.js';
