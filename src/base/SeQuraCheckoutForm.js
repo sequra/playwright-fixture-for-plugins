@@ -13,6 +13,9 @@ export default class SeQuraCheckoutForm extends Fixture {
         return {
             iframe: product => this.page.frameLocator(`#sq-identification-${product}`),
             iframeLocator: product => this.page.locator(`#sq-identification-${product}`),
+            firstName: iframe => iframe.locator('[name="given_names"]'),
+            lastName: iframe => iframe.locator('[name="surname"]'),
+            phone: iframe => iframe.locator('[name="mobile_phone"]'),
             dateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             nin: iframe => iframe.locator('[name="nin"]'),
             acceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
@@ -88,34 +91,36 @@ export default class SeQuraCheckoutForm extends Fixture {
      * Fill checkout form for i1 product
      * 
      * @param {Object} options Contains the data to fill the form
-     * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.nin National identification number
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
     async fillI1CheckoutForm(options) {
-        const { dateOfBirth, nin } = options;
-        await this.locators.iframeLocator('i1').waitFor({ state: 'attached', timeout: 10000 });
+        const { iframeLocator, acceptPrivacyPolicy, acceptServiceDuration, iframeBtn } = this.locators;
+        await iframeLocator('i1').waitFor({ state: 'attached', timeout: 10000 });
         const iframe = this.locators.iframe('i1');
-        // TODO: Fill the First name, last name, and mobile phone if needed.
-        await this.locators.dateOfBirth(iframe).click();
-        await this.locators.dateOfBirth(iframe).pressSequentially(dateOfBirth);
-        await this.locators.nin(iframe).click();
-        await this.locators.nin(iframe).pressSequentially(nin);
-        await this.locators.acceptPrivacyPolicy(iframe).click();
+        await this.#fillPersonalInfo(iframe, options);
+        await acceptPrivacyPolicy(iframe).click();
         // Accept service duration if the checkbox is present.
-        if (await this.locators.acceptServiceDuration(iframe).count() > 0) {
-            await this.locators.acceptServiceDuration(iframe).click();
+        if (await acceptServiceDuration(iframe).count() > 0) {
+            await acceptServiceDuration(iframe).click();
         }
-        await this.locators.iframeBtn(iframe).click();
+        await iframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
     }
 
     /**
      * Fill checkout form for pp3 product
      * @param {Object} options Contains the data to fill the form
-     * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.nin National identification number
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @param {Object} options.creditCard Credit card
      * @param {string} options.creditCard.number Credit card number
@@ -124,35 +129,63 @@ export default class SeQuraCheckoutForm extends Fixture {
      * @returns {Promise<void>}
      */
     async fillPp3CheckoutForm(options) {
-        const { dateOfBirth, nin } = options;
-        await this.locators.iframeLocator('pp3').waitFor({ state: 'attached', timeout: 10000 });
+        const { iframeLocator, monthlyIncomeSelect, monthlyFixedExpensesSelect, occupationSelect, acceptPrivacyPolicy, acceptServiceDuration, iframeBtn } = this.locators;
+        await iframeLocator('pp3').waitFor({ state: 'attached', timeout: 10000 });
         const iframe = this.locators.iframe('pp3');
-        await this.locators.iframeBtn(iframe).click(); // Click to proceed with the selected payment plan
-        // TODO: Fill the First name, last name, and mobile phone if needed.
-        await this.locators.dateOfBirth(iframe).click();
-        await this.locators.dateOfBirth(iframe).pressSequentially(dateOfBirth);
-        await this.locators.nin(iframe).click();
-        await this.locators.nin(iframe).pressSequentially(nin);
+        await iframeBtn(iframe).click(); // Click to proceed with the selected payment plan
+        await this.#fillPersonalInfo(iframe, options);
         // Select monthly income. This field might not be present in some countries
-        if (await this.locators.monthlyIncomeSelect(iframe).count() > 0) {
-            await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
+        if (await monthlyIncomeSelect(iframe).count() > 0) {
+            await monthlyIncomeSelect(iframe).selectOption({ index: 1 });
         }
         // Select monthly fixed expenses. This field might not be present in some countries
-        if (await this.locators.monthlyFixedExpensesSelect(iframe).count() > 0) {
-            await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
+        if (await monthlyFixedExpensesSelect(iframe).count() > 0) {
+            await monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
         }
         // Select occupation. This field might not be present in some countries
-        if (await this.locators.occupationSelect(iframe).count() > 0) {
-            await this.locators.occupationSelect(iframe).selectOption({ value: 'unemployed' });
+        if (await occupationSelect(iframe).count() > 0) {
+            await occupationSelect(iframe).selectOption({ value: 'unemployed' });
         }
 
-        await this.locators.acceptPrivacyPolicy(iframe).click();
+        await acceptPrivacyPolicy(iframe).click();
         // Accept service duration if the checkbox is present.
-        if (await this.locators.acceptServiceDuration(iframe).count() > 0) {
-            await this.locators.acceptServiceDuration(iframe).click();
+        if (await acceptServiceDuration(iframe).count() > 0) {
+            await acceptServiceDuration(iframe).click();
         }
-        await this.locators.iframeBtn(iframe).click();
+        await iframeBtn(iframe).click();
         await this.fillOtp(iframe, options);
         await this.fillCreditCard(iframe, options);
+    }
+
+    /**
+     * Fill personal info fields in the iframe
+     * 
+     * @param {import("@playwright/test").FrameLocator} iframe Iframe containing the personal info fields
+     * @param {Object} options Contains the data to fill the form
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * 
+     * @return {Promise<void>}
+     */
+    async #fillPersonalInfo(iframe, options) {
+        const { firstName = null, lastName = null, phone = null, dateOfBirth = null, nin = null } = options;
+        if (firstName) {
+            await this.locators.firstName(iframe).fill(firstName);
+        }
+        if (lastName) {
+            await this.locators.lastName(iframe).fill(lastName);
+        }
+        if (phone) {
+            await this.locators.phone(iframe).fill(phone);
+        }
+        if (dateOfBirth) {
+            await this.locators.dateOfBirth(iframe).fill(dateOfBirth);
+        }
+        if (nin) {
+            await this.locators.nin(iframe).fill(nin);
+        }
     }
 }

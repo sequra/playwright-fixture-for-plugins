@@ -190,8 +190,11 @@ export default class CheckoutPage extends Page {
      * Fill checkout form for i1 product
      * 
      * @param {Object} options Contains the data to fill the form
-     * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.nin National identification number
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
@@ -202,8 +205,11 @@ export default class CheckoutPage extends Page {
     /**
      * Fill checkout form for pp3 product
      * @param {Object} options Contains the data to fill the form
-     * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.nin National identification number
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @param {Object} options.creditCard Credit card
      * @param {string} options.creditCard.number Credit card number
