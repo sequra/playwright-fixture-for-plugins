@@ -31,7 +31,7 @@ export default class SeQuraCheckoutForm extends Fixture {
             creditCardNumber: iframe => this.locators.creditCardIframe(iframe).locator('#cc-number'),
             creditCardExp: iframe => this.locators.creditCardIframe(iframe).locator('#cc-exp'),
             creditCardCsc: iframe => this.locators.creditCardIframe(iframe).locator('#cc-csc'),
-            paymentButton: iframe => iframe.locator('.payment-btn-container button:not([disabled])'),
+            paymentButton: (iframe, checkNotDisabled = true) => iframe.locator(`.payment-btn-container button${checkNotDisabled ? ':not([disabled])' : ''}`),
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
             occupationSelect: iframe => iframe.locator('#occupation')
@@ -68,6 +68,8 @@ export default class SeQuraCheckoutForm extends Fixture {
             await creditCardName(iframe).pressSequentially(creditCard.name, { delay: 100 });
         }
         await paymentButton(iframe).click();
+        // Wait for the payment button to disappear before proceeding to make sure the request has been sent.
+        await this.expect(paymentButton(iframe, false)).toHaveCount(0, { timeout: 10000 });
     }
 
     /**
