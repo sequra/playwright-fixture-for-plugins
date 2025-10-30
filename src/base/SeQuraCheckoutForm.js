@@ -54,7 +54,7 @@ export default class SeQuraCheckoutForm extends Fixture {
 
         try {
             // Click the new credit card button if present.
-            await newCreditCardButton(iframe).click({ timeout: 3000 });
+            await newCreditCardButton(iframe).click({ timeout: 10000 });
         } catch (e) {
             // Do nothing, the button is not visible
         }
