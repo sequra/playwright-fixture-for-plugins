@@ -14,7 +14,7 @@ export default class SeQuraCheckoutForm extends Fixture {
             iframe: product => this.page.frameLocator(`#sq-identification-${product}`),
             iframeLocator: product => this.page.locator(`#sq-identification-${product}`),
             firstName: iframe => iframe.locator('[name="given_names"]'),
-            lastName: iframe => iframe.locator('[name="surname"]'),
+            lastName: iframe => iframe.locator('[name="surnames"]'),
             phone: iframe => iframe.locator('[name="mobile_phone"]'),
             dateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             nin: iframe => iframe.locator('[name="nin"]'),
@@ -198,13 +198,13 @@ export default class SeQuraCheckoutForm extends Fixture {
         if (nin) {
             await this.locators.nin(iframe).fill(nin);
         }
-        if (address1) {
+        if (address1 && (await this.locators.address(iframe).count() > 0)) {
             await this.locators.address(iframe).fill(address1);
         }
-        if (city) {
+        if (city && (await this.locators.city(iframe).count() > 0)) {
             await this.locators.city(iframe).fill(city);
         }
-        if (postcode) {
+        if (postcode && (await this.locators.postalCode(iframe).count() > 0)) {
             await this.locators.postalCode(iframe).fill(postcode);
         }
     }
