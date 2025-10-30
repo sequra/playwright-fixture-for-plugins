@@ -18,6 +18,9 @@ export default class SeQuraCheckoutForm extends Fixture {
             phone: iframe => iframe.locator('[name="mobile_phone"]'),
             dateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
             nin: iframe => iframe.locator('[name="nin"]'),
+            address: iframe => iframe.locator('[name="address"]'),
+            city: iframe => iframe.locator('[name="city"]'),
+            postalCode: iframe => iframe.locator('[name="postal_code"]'),
             acceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
             acceptServiceDuration: iframe => iframe.locator('#sequra_service_duration_accepted'),
             iframeBtn: iframe => iframe.locator('.actions-section button:not([disabled])'),
@@ -96,6 +99,9 @@ export default class SeQuraCheckoutForm extends Fixture {
      * @param {string} options.lastName Last name. If not provided, the field will not be filled
      * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
      * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
@@ -121,6 +127,9 @@ export default class SeQuraCheckoutForm extends Fixture {
      * @param {string} options.lastName Last name. If not provided, the field will not be filled
      * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
      * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @param {Object} options.creditCard Credit card
      * @param {string} options.creditCard.number Credit card number
@@ -167,11 +176,13 @@ export default class SeQuraCheckoutForm extends Fixture {
      * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
      * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
      * @param {string} options.nin National identification number. If not provided, the field will not be filled
-     * 
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @return {Promise<void>}
      */
     async #fillPersonalInfo(iframe, options) {
-        const { firstName = null, lastName = null, phone = null, dateOfBirth = null, nin = null } = options;
+        const { firstName = null, lastName = null, phone = null, dateOfBirth = null, nin = null, address1 = null, city = null, postcode = null } = options;
         if (firstName) {
             await this.locators.firstName(iframe).fill(firstName);
         }
@@ -186,6 +197,15 @@ export default class SeQuraCheckoutForm extends Fixture {
         }
         if (nin) {
             await this.locators.nin(iframe).fill(nin);
+        }
+        if (address1) {
+            await this.locators.address(iframe).fill(address1);
+        }
+        if (city) {
+            await this.locators.city(iframe).fill(city);
+        }
+        if (postcode) {
+            await this.locators.postalCode(iframe).fill(postcode);
         }
     }
 }

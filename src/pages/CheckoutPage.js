@@ -195,6 +195,9 @@ export default class CheckoutPage extends Page {
      * @param {string} options.lastName Last name. If not provided, the field will not be filled
      * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
      * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
@@ -210,6 +213,9 @@ export default class CheckoutPage extends Page {
      * @param {string} options.lastName Last name. If not provided, the field will not be filled
      * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
      * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @param {Object} options.creditCard Credit card
      * @param {string} options.creditCard.number Credit card number
