@@ -2,6 +2,7 @@ import BackOffice from "../base/BackOffice.js";
 import DataProvider from "../utils/DataProvider.js";
 import SeQuraHelper from "../utils/SeQuraHelper.js";
 import Page from "./Page.js";
+import SeQuraCheckoutForm from "../base/SeQuraCheckoutForm.js";
 
 /**
  * Checkout page
@@ -9,37 +10,25 @@ import Page from "./Page.js";
 export default class CheckoutPage extends Page {
 
     /**
-    * Init the locators with the locators available
-    * 
-    * @returns {Object}
-    */
+     * @param {import('@playwright/test').Page} page
+     * @param {string} baseURL
+     * @param {import('@playwright/test').Expect} expect
+     * @param {import('@playwright/test').Request} request
+     */
+    constructor(page, baseURL, expect, request) {
+        super(page, baseURL, expect, request);
+        this.checkoutForm = new SeQuraCheckoutForm(page, baseURL, expect);
+    }
+
+    /**
+     * Init the locators with the locators available
+     * @returns {Object}
+     */
     initLocators() {
         return {
             paymentMethods: opt => this.paymentMethodsLocator(opt),
             paymentMethodTitle: opt => this.paymentMethodTitleLocator(opt),
             paymentMethodInput: opt => this.paymentMethodInputLocator(opt),
-            sqIframe: product => this.page.frameLocator(`#sq-identification-${product}`),
-            sqIframeLocator: product => this.page.locator(`#sq-identification-${product}`),
-            sqDateOfBirth: iframe => iframe.locator('[name="date_of_birth"]'),
-            sqNin: iframe => iframe.locator('[name="nin"]'),
-            sqAcceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
-            sqAcceptServiceDuration: iframe => iframe.locator('#sequra_service_duration_accepted'),
-            sqIframeBtn: iframe => iframe.locator('.actions-section button:not([disabled])'),
-            sqOtp1: iframe => iframe.locator('[aria-label="Please enter OTP character 1"]'),
-            sqOtp2: iframe => iframe.locator('[aria-label="Please enter OTP character 2"]'),
-            sqOtp3: iframe => iframe.locator('[aria-label="Please enter OTP character 3"]'),
-            sqOtp4: iframe => iframe.locator('[aria-label="Please enter OTP character 4"]'),
-            sqOtp5: iframe => iframe.locator('[aria-label="Please enter OTP character 5"]'),
-            sqNewCreditCardButton: iframe => iframe.locator('.reuse-card-component .PaymentMethodsSelectionSection__actionsSection > .tlr-Button___tertiary_j9CJ-'),
-            sqIframeCreditCard: iframe => iframe.frameLocator('#mufasa-iframe'),
-            sqCCName: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cardholder_name'),
-            sqCCNumber: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-number'),
-            sqCCExp: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-exp'),
-            sqCCCsc: iframe => this.locators.sqIframeCreditCard(iframe).locator('#cc-csc'),
-            sqPaymentButton: iframe => iframe.locator('.payment-btn-container button:not([disabled])'),
-            monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
-            monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
-            occupationSelect: iframe => iframe.locator('#occupation'),
             moreInfoIframe: () => this.page.frameLocator('iframe'),
             moreInfoCloseBtn: () => this.locators.moreInfoIframe().locator('button[data-testid="close-popup"]'),
             moreInfoLink: options => this.moreInfoLinkLocator(options)
@@ -183,25 +172,7 @@ export default class CheckoutPage extends Page {
      * @returns {Promise<void>}
      */
     async fillCreditCard(iframe, options) {
-        const { creditCard } = options;
-        const { sqCCName, sqCCNumber, sqCCExp, sqCCCsc, sqPaymentButton, sqNewCreditCardButton } = this.locators;
-
-        try {
-            // Click the new credit card button if present.
-            await sqNewCreditCardButton(iframe).click({ timeout: 3000 });
-        } catch (e) {
-            // Do nothing, the button is not visible
-        }
-
-        await sqCCNumber(iframe).waitFor({ state: 'attached', timeout: 10000 });
-        await sqCCNumber(iframe).pressSequentially(creditCard.number, { delay: 100 });
-        await sqCCExp(iframe).pressSequentially(creditCard.exp, { delay: 100 });
-        await sqCCCsc(iframe).pressSequentially(creditCard.cvc, { delay: 100 });
-        // Check if cardholder name field is present and fill it if so
-        if (await sqCCName(iframe).count() > 0) {
-            await sqCCName(iframe).pressSequentially(creditCard.name, { delay: 100 });
-        }
-        await sqPaymentButton(iframe).click();
+        await this.checkoutForm.fillCreditCard(iframe, options);
     }
 
     /**
@@ -212,76 +183,48 @@ export default class CheckoutPage extends Page {
      * @returns {Promise<void>}
      */
     async fillOtp(iframe, options) {
-        const { otp } = options;
-
-        await this.locators.sqOtp1(iframe).waitFor({ state: 'attached', timeout: 10000 });
-        await this.locators.sqOtp1(iframe).pressSequentially(otp[0]);
-        await this.locators.sqOtp2(iframe).pressSequentially(otp[1]);
-        await this.locators.sqOtp3(iframe).pressSequentially(otp[2]);
-        await this.locators.sqOtp4(iframe).pressSequentially(otp[3]);
-        await this.locators.sqOtp5(iframe).pressSequentially(otp[4]);
-
-        await this.locators.sqIframeBtn(iframe).click();
+        await this.checkoutForm.fillOtp(iframe, options);
     }
 
     /**
      * Fill checkout form for i1 product
      * 
      * @param {Object} options Contains the data to fill the form
-     * @param {string} options.dateOfBirth Date of birth
-     * @param {string} options.nin National identification number
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
     async fillI1CheckoutForm(options) {
-        const { dateOfBirth, nin } = options;
-        await this.locators.sqIframeLocator('i1').waitFor({ state: 'attached', timeout: 10000 });
-        const iframe = this.locators.sqIframe('i1');
-        // First name, last name, and mobile phone came already filled.
-        await this.locators.sqDateOfBirth(iframe).click();
-        await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
-        await this.locators.sqNin(iframe).click();
-        await this.locators.sqNin(iframe).pressSequentially(nin);
-        await this.locators.sqAcceptPrivacyPolicy(iframe).click();
-        // Accept service duration if the checkbox is present.
-        if (await this.locators.sqAcceptServiceDuration(iframe).count() > 0) {
-            await this.locators.sqAcceptServiceDuration(iframe).click();
-        }
-        await this.locators.sqIframeBtn(iframe).click();
-        await this.fillOtp(iframe, options);
+        await this.checkoutForm.fillI1CheckoutForm(options);
     }
 
+    /**
+     * Fill checkout form for pp3 product
+     * @param {Object} options Contains the data to fill the form
+     * @param {string} options.dateOfBirth Date of birth. If not provided, the field will not be filled
+     * @param {string} options.firstName First name. If not provided, the field will not be filled
+     * @param {string} options.lastName Last name. If not provided, the field will not be filled
+     * @param {string} options.phone Mobile phone number. If not provided, the field will not be filled
+     * @param {string} options.nin National identification number. If not provided, the field will not be filled
+     * @param {string} options.address1 Address. If not provided, the field will not be filled
+     * @param {string} options.city City. If not provided, the field will not be filled
+     * @param {string} options.postcode Postal code. If not provided, the field will not be filled
+     * @param {string[]} options.otp Digits of the OTP
+     * @param {Object} options.creditCard Credit card
+     * @param {string} options.creditCard.number Credit card number
+     * @param {string} options.creditCard.exp Credit card expiration date
+     * @param {string} options.creditCard.cvc Credit card CVC
+     * @returns {Promise<void>}
+     */
     async fillPp3CheckoutForm(options) {
-        const { dateOfBirth, nin } = options;
-        await this.locators.sqIframeLocator('pp3').waitFor({ state: 'attached', timeout: 10000 });
-        const iframe = this.locators.sqIframe('pp3');
-        await this.locators.sqIframeBtn(iframe).click(); // Click to proceed with the selected payment plan
-        // First name, last name, and mobile phone came already filled.
-        await this.locators.sqDateOfBirth(iframe).click();
-        await this.locators.sqDateOfBirth(iframe).pressSequentially(dateOfBirth);
-        await this.locators.sqNin(iframe).click();
-        await this.locators.sqNin(iframe).pressSequentially(nin);
-        // Select monthly income. This field might not be present in some countries
-        if (await this.locators.monthlyIncomeSelect(iframe).count() > 0) {
-            await this.locators.monthlyIncomeSelect(iframe).selectOption({ index: 1 });
-        }
-        // Select monthly fixed expenses. This field might not be present in some countries
-        if (await this.locators.monthlyFixedExpensesSelect(iframe).count() > 0) {
-            await this.locators.monthlyFixedExpensesSelect(iframe).selectOption({ index: 1 });
-        }
-        // Select occupation. This field might not be present in some countries
-        if (await this.locators.occupationSelect(iframe).count() > 0) {
-            await this.locators.occupationSelect(iframe).selectOption({ value: 'unemployed' });
-        }
-
-        await this.locators.sqAcceptPrivacyPolicy(iframe).click();
-        // Accept service duration if the checkbox is present.
-        if (await this.locators.sqAcceptServiceDuration(iframe).count() > 0) {
-            await this.locators.sqAcceptServiceDuration(iframe).click();
-        }
-        await this.locators.sqIframeBtn(iframe).click();
-        await this.fillOtp(iframe, options);
-        await this.fillCreditCard(iframe, options);
+        await this.checkoutForm.fillPp3CheckoutForm(options);
     }
 
     async fillSp1CheckoutForm(options) {
