@@ -34,7 +34,9 @@ export default class SeQuraCheckoutForm extends Fixture {
             paymentButton: (iframe, checkNotDisabled = true) => iframe.locator(`.payment-btn-container button${checkNotDisabled ? ':not([disabled])' : ''}`),
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
-            occupationSelect: iframe => iframe.locator('#occupation')
+            occupationSelect: iframe => iframe.locator('#occupation'),
+            addCardOption: iframe => iframe.locator('.payment-methods-selector:has([data-testid="add-card-logo"]) .payment-methods-selector-checkbox'),
+            addCardButton: iframe => iframe.locator('[data-testid="payment-methods-selection-payment-button-no-selected-payment-method"]'),
         };
     }
 
@@ -50,7 +52,23 @@ export default class SeQuraCheckoutForm extends Fixture {
      */
     async fillCreditCard(iframe, options) {
         const { creditCard } = options;
-        const { creditCardName, creditCardNumber, creditCardExp, creditCardCsc, paymentButton, newCreditCardButton } = this.locators;
+        const { 
+            creditCardName, 
+            creditCardNumber, 
+            creditCardExp, 
+            creditCardCsc, 
+            paymentButton, 
+            newCreditCardButton, 
+            addCardOption 
+        } = this.locators;
+
+        try{
+            // Click on 'Carte' if it exists before filling the credit card form
+            await addCardOption(iframe).click({ timeout: 10000 });
+            await addCardButton(iframe).click({ timeout: 2000 });
+        } catch(e){
+            // Do nothing, the option is not visible
+        }
 
         try {
             // Click the new credit card button if present.
