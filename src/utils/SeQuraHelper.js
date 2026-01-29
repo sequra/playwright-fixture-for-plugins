@@ -52,10 +52,10 @@ export default class SeQuraHelper extends Fixture {
     * Do a webhook request
     * 
     * @param {WebhookOption} options The webhook options
-    * @returns {Promise<void>}
+    * @returns {Promise<void|Object>}
     */
-    async executeWebhook(options = { webhook, args: [] }) {
-        const { webhook, args = [] } = options;
+    async executeWebhook(options = { webhook, args: [], returnResponse: false }) {
+        const { webhook, args = [], returnResponse = false } = options;
         if (!this.webhooks[webhook]) {
             throw new Error(`Webhook "${webhook}" not found`);
         }
@@ -63,6 +63,11 @@ export default class SeQuraHelper extends Fixture {
         try {
             const response = await this.request.post(url);
             this.expect(response.status(), `Webhook "${url}" response has HTTP 200 code`).toBe(200);
+            if (returnResponse) {
+                // Return the response payload
+                const responseBody = await response.json();
+                return responseBody;
+            }
         } catch (e) {
             console.log(webhook, args, e);
             throw e;
