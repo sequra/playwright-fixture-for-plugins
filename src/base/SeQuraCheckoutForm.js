@@ -127,7 +127,7 @@ export default class SeQuraCheckoutForm extends Fixture {
         const { iframeLocator, acceptPrivacyPolicy, acceptServiceDuration, iframeBtn } = this.locators;
         await iframeLocator('i1').waitFor({ state: 'attached', timeout: 10000 });
         const iframe = this.locators.iframe('i1');
-        await this.#fillPersonalInfo(iframe, options);
+        await this.fillPersonalInfo(iframe, options);
         await acceptPrivacyPolicy(iframe).click();
         // Accept service duration if the checkbox is present.
         if (await acceptServiceDuration(iframe).count() > 0) {
@@ -160,7 +160,7 @@ export default class SeQuraCheckoutForm extends Fixture {
         await iframeLocator('pp3').waitFor({ state: 'attached', timeout: 10000 });
         const iframe = this.locators.iframe('pp3');
         await iframeBtn(iframe).click(); // Click to proceed with the selected payment plan
-        await this.#fillPersonalInfo(iframe, options);
+        await this.fillPersonalInfo(iframe, options);
         // Select monthly income. This field might not be present in some countries
         if (await monthlyIncomeSelect(iframe).count() > 0) {
             await monthlyIncomeSelect(iframe).selectOption({ index: 1 });
@@ -199,7 +199,7 @@ export default class SeQuraCheckoutForm extends Fixture {
      * @param {string} options.postcode Postal code. If not provided, the field will not be filled
      * @return {Promise<void>}
      */
-    async #fillPersonalInfo(iframe, options) {
+    async fillPersonalInfo(iframe, options) {
         const { firstName = null, lastName = null, phone = null, dateOfBirth = null, nin = null, address1 = null, city = null, postcode = null } = options;
         if (firstName) {
             await this.locators.firstName(iframe).fill(firstName);
