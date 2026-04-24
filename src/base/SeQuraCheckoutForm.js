@@ -23,7 +23,7 @@ export default class SeQuraCheckoutForm extends Fixture {
             postalCode: iframe => iframe.locator('[name="postal_code"]'),
             acceptPrivacyPolicy: iframe => iframe.locator('#sequra_privacy_policy_accepted'),
             acceptServiceDuration: iframe => iframe.locator('#sequra_service_duration_accepted'),
-            iframeBtn: iframe => iframe.locator('.actions-section button:not([disabled])'),
+            iframeBtn: iframe => iframe.locator('[class*="actions-section"] button:not([disabled])'),
             otp: (iframe, position) => iframe.locator(`[aria-label="Please enter OTP character ${position}"]`),
             newCreditCardButton: iframe => iframe.locator('.reuse-card-component .PaymentMethodsSelectionSection__actionsSection > .tlr-Button___tertiary_j9CJ-'),
             creditCardIframe: iframe => iframe.frameLocator('#mufasa-iframe'),
