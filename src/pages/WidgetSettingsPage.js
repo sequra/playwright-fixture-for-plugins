@@ -93,10 +93,12 @@ export default class WidgetSettingsPage extends SettingsPage {
             // Fill the product page selectors
             await selForPriceInput().fill(product.priceSel);
             await selForPriceInput().blur();
-            await selForAltPriceInput().fill(product.altPriceSel);
-            await selForAltPriceInput().blur();
-            await selForAltPriceTriggerInput().fill(product.altPriceTriggerSel);
-            await selForAltPriceTriggerInput().blur();
+            if (product.useAltPriceSelectors) {
+                await selForAltPriceInput().fill(product.altPriceSel);
+                await selForAltPriceInput().blur();
+                await selForAltPriceTriggerInput().fill(product.altPriceTriggerSel);
+                await selForAltPriceTriggerInput().blur();
+            }
             await selForDefaultLocationInput().fill(product.locationSel);
             await selForDefaultLocationInput().blur();
 
@@ -180,8 +182,10 @@ export default class WidgetSettingsPage extends SettingsPage {
         await this.expectToBeChecked(this.locators.displayWidgetInProductToggle(), '"Display widget on product page" toggle', options.product.display);
         if (options.product.display) {
             await this.expect(this.locators.selForPriceInput()).toHaveValue(options.product.priceSel);
-            await this.expect(this.locators.selForAltPriceInput()).toHaveValue(options.product.altPriceSel);
-            await this.expect(this.locators.selForAltPriceTriggerInput()).toHaveValue(options.product.altPriceTriggerSel);
+            if (options.product.useAltPriceSelectors) {
+                await this.expect(this.locators.selForAltPriceInput()).toHaveValue(options.product.altPriceSel);
+                await this.expect(this.locators.selForAltPriceTriggerInput()).toHaveValue(options.product.altPriceTriggerSel);
+            }
             await this.expect(this.locators.selForDefaultLocationInput()).toHaveValue(options.product.locationSel);
 
             const customLocationDetailsLocator = this.locators.customLocationsDetails();
