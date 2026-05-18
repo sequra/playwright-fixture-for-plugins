@@ -169,6 +169,7 @@ export default class DataProvider extends Fixture {
             widgetConfig: '{"alignment":"center","amount-font-bold":"true","amount-font-color":"#1C1C1C","amount-font-size":"15","background-color":"white","border-color":"#B1AEBA","border-radius":"","class":"","font-color":"#1C1C1C","link-font-color":"#1C1C1C","link-underline":"true","no-costs-claim":"","size":"M","starting-text":"only","type":"banner"}',
             product: {
                 display: false,
+                useAltPriceSelectors: true,
                 priceSel: '',
                 altPriceSel: '',
                 altPriceTriggerSel: '',
