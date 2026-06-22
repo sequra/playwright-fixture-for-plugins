@@ -72,3 +72,12 @@ This repo has **no build, no in-repo test runner, no linter, and no CI quality w
 ## Documentation
 
 `README.md` is the authoritative consumer guide; keep it and this file consistent when commands or the public API change. Architectural decisions are recorded as ADRs under `docs/decisions/`.
+
+## Working principles
+
+Adapted from [Andrej Karpathy's guidelines](https://raw.githubusercontent.com/multica-ai/andrej-karpathy-skills/refs/heads/main/CLAUDE.md). Favor caution over speed; use judgment for trivial tasks.
+
+1. **Think before coding.** State assumptions instead of proceeding silently. When a request has multiple interpretations, surface them; suggest a simpler approach if one exists; ask before implementing when genuinely unsure.
+2. **Simplicity first.** Minimum code that solves the problem — nothing speculative. No unrequested features, abstractions, or defensive error handling. If code exceeds what's needed, cut it.
+3. **Surgical changes.** Make only the essential edits. Preserve the surrounding style; don't refactor unrelated code. Remove only the dependencies your change introduces, not pre-existing dead code.
+4. **Goal-driven execution.** Turn vague requests into testable success criteria, then loop until verified rather than asking for constant confirmation.
