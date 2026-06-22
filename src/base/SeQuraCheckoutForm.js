@@ -35,6 +35,7 @@ export default class SeQuraCheckoutForm extends Fixture {
             monthlyIncomeSelect: iframe => iframe.locator('#monthly_income'),
             monthlyFixedExpensesSelect: iframe => iframe.locator('#monthly_fixed_expenses'),
             occupationSelect: iframe => iframe.locator('#occupation'),
+            sectorInput: iframe => iframe.locator('[name="sector"]'),
             addCardOption: iframe => iframe.locator('.payment-methods-selector:has([data-testid="add-card-logo"]) .payment-methods-selector-checkbox')
         };
     }
@@ -172,6 +173,10 @@ export default class SeQuraCheckoutForm extends Fixture {
         // Select occupation. This field might not be present in some countries
         if (await occupationSelect(iframe).count() > 0) {
             await occupationSelect(iframe).selectOption({ value: 'unemployed' });
+        }
+        // Fill the sector field. This field might not be present in some countries
+        if (await this.locators.sectorInput(iframe).count() > 0) {
+            await this.locators.sectorInput(iframe).fill('none');
         }
 
         await acceptPrivacyPolicy(iframe).click();
