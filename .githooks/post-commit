@@ -1,0 +1,10 @@
+#!/bin/sh
+# Delegate to a local (untracked) .git/hooks/post-commit if one exists.
+# Setting core.hooksPath to .githooks would otherwise bypass per-developer
+# local hooks such as graphify's knowledge-graph rebuild. Resolve via
+# --git-dir (NOT --git-path hooks/..., which honors core.hooksPath and would
+# point back here, recursing).
+git_dir=$(git rev-parse --git-dir 2>/dev/null) || exit 0
+local_hook="$git_dir/hooks/post-commit"
+[ -x "$local_hook" ] && exec "$local_hook" "$@"
+exit 0

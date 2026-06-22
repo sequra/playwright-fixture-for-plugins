@@ -54,6 +54,20 @@ This repo has **no build, no in-repo test runner, no linter, and no CI quality w
 - Tests that exercise these fixtures live in the **consuming** repos and run there with Playwright (`npx playwright test`), not here.
 - After cloning, see "Local setup" below for git-hook activation.
 
+## Local setup
+
+Run once after cloning to enable the shared git hooks:
+
+```bash
+./setup.sh
+```
+
+This sets `core.hooksPath=.githooks` (a local git setting, not applied automatically on clone). The shared hooks:
+- `.githooks/pre-commit` — runs `node --check` on staged `.js`/`.mjs`/`.cjs` files; blocks the commit on a syntax error.
+- `.githooks/post-commit` / `.githooks/post-checkout` — thin dispatchers that delegate to any per-developer hook of the same name under `.git/hooks/` (e.g. graphify's knowledge-graph rebuild), so `core.hooksPath` does not disable local hooks.
+
+graphify is an optional, per-developer tool. Its config lives in the git-ignored `CLAUDE.local.md` and `.claude/settings.local.json`; its graph output lives in `graphify-out/` (excluded via `.git/info/exclude`). To enable local graph rebuilds: `graphify hook install`.
+
 ## Conventions
 
 - **ES modules only** (`import`/`export`), one default-exported class per file.
