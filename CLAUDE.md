@@ -83,6 +83,12 @@ graphify is an optional, per-developer tool. Its config lives in the git-ignored
 3. Add JSDoc types matching the surrounding files.
 4. Re-export it from `src/index.js`.
 
+## Project skills
+
+Repo-specific Claude Code skills live under `.claude/skills/`:
+- `version-bump` — bump the package version and re-sync `package-lock.json` for a release.
+- `page-object` — scaffold a new page object / fixture following the abstract-base-class conventions.
+
 ## Documentation
 
 `README.md` is the authoritative consumer guide; keep it and this file consistent when commands or the public API change. Architectural decisions are recorded as ADRs under `docs/decisions/`.
