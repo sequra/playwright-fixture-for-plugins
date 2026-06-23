@@ -6,4 +6,3 @@ cd "$(dirname "$0")"
 
 git config core.hooksPath .githooks
 echo "Enabled shared git hooks (core.hooksPath=.githooks)."
-echo "Optional: for a local knowledge-graph that rebuilds on commit, run 'graphify hook install'."

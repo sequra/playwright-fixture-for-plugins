@@ -5,7 +5,6 @@ docs/
 # Claude Code / developer tooling — not part of the published library
 .claude/
 .githooks/
-graphify-out/
 .sdd/
 
 # Files to ignore

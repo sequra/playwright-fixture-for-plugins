@@ -1,8 +1,0 @@
-#!/bin/sh
-# Delegate to a local (untracked) .git/hooks/post-checkout if one exists, so
-# core.hooksPath does not silently disable per-developer local hooks (e.g.
-# graphify's branch-switch rebuild). See post-commit for the --git-dir rationale.
-git_dir=$(git rev-parse --git-dir 2>/dev/null) || exit 0
-local_hook="$git_dir/hooks/post-checkout"
-[ -x "$local_hook" ] && exec "$local_hook" "$@"
-exit 0
