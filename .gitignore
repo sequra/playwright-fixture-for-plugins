@@ -1,1 +1,5 @@
 node_modules/
+
+# Claude Code — local, per-developer config (shared config is tracked)
+CLAUDE.local.md
+.claude/settings.local.json

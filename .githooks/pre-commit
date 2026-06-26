@@ -1,0 +1,21 @@
+#!/bin/sh
+# Syntax-check staged JavaScript before committing. This source-only library
+# has no test/lint/build, so a parse check is the one objective gate available.
+set -e
+
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|mjs|cjs)$' || true)
+[ -z "$files" ] && exit 0
+
+if ! command -v node >/dev/null 2>&1; then
+    echo "pre-commit: node not found on PATH, skipping JS syntax check" >&2
+    exit 0
+fi
+
+status=0
+for f in $files; do
+    [ -f "$f" ] || continue
+    if ! node --check "$f"; then
+        status=1
+    fi
+done
+exit $status
