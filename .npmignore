@@ -2,13 +2,5 @@
 .github/
 docs/
 
-# Claude Code / developer tooling — not part of the published library
-.claude/
-.githooks/
-.sdd/
-
 # Files to ignore
 README.md
-CLAUDE.md
-CLAUDE.local.md
-setup.sh

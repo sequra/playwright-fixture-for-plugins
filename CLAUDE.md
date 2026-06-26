@@ -25,7 +25,7 @@ Abstract-base-class / Page Object Model. Everything descends from `Fixture` and 
 - `src/base/SeQuraCheckoutForm.js` — seQura checkout-form interactions.
 - `src/pages/Page.js` — base page object; adds `request` to the constructor and an abstract `goto()`.
 - `src/pages/PageWithWidgets.js` → `ProductPage` / `CategoryPage` — page objects that assert seQura promotional widgets.
-- `src/pages/*SettingsPage.js` — the seQura back-office settings screens (General, Connection, PaymentMethods, Widget, Advanced, Onboarding).
+- `src/pages/SettingsPage.js` — base settings-page object; the concrete seQura back-office screens (`GeneralSettingsPage`, `ConnectionSettingsPage`, `PaymentMethodsSettingsPage`, `WidgetSettingsPage`, `AdvancedSettingsPage`, `OnboardingSettingsPage`) extend it.
 - `src/pages/CartPage.js`, `CheckoutPage.js` — storefront flow pages.
 - `src/utils/DataProvider.js` — centralized test data (shoppers, payment methods, widget options) per country/scenario.
 - `src/utils/SeQuraHelper.js` — webhook driver. Builds `?sq-webhook=…` URLs and executes them via Playwright's `request`; consumers register webhooks in `initWebhooks()`.
