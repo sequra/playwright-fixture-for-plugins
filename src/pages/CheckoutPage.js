@@ -232,6 +232,18 @@ export default class CheckoutPage extends Page {
     }
 
     /**
+     * Fill the Express Checkout identification form (product code `tbs`).
+     * @param {string} product seQura product to pick in the chooser (i1, sp1, pp3)
+     * @param {Object} options Data to fill — only provided personal-info fields are set
+     * @param {string} [options.nin] National identification number
+     * @param {string[]} options.otp Digits of the OTP
+     * @returns {Promise<void>}
+     */
+    async fillExpressCheckoutForm(product, options) {
+        await this.checkoutForm.fillExpressCheckoutForm(product, options);
+    }
+
+    /**
      * Define the expected behavior after placing an order
      * @param {Object} options 
      */
