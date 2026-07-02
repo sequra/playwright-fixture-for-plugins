@@ -16,3 +16,5 @@ export { default as WidgetSettingsPage } from './pages/WidgetSettingsPage.js';
 export { default as CartPage } from './pages/CartPage.js';
 export { default as CategoryPage } from './pages/CategoryPage.js';
 export { default as AdvancedSettingsPage } from './pages/AdvancedSettingsPage.js';
+export { default as ExpressCheckoutPage } from './pages/ExpressCheckoutPage.js';
+export { default as AccountPage } from './pages/AccountPage.js';
