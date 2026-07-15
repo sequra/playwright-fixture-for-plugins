@@ -11,6 +11,11 @@ export default class DataProvider extends Fixture {
     static SERVICE_USERNAME = 'dummy_services_automated_tests';
     static PRODUCT_WIDGET = 'product';
     static CART_WIDGET = 'cart';
+    static BANNER_MEDIA_DIR = 'sequra/banners';
+    static BANNER_ON_HOME = 'displayOnHomePage';
+    static BANNER_ON_PRODUCT = 'displayOnProductPage';
+    static BANNER_ON_CART = 'displayOnCartPage';
+    static BANNER_ON_LISTING = 'displayOnProductListingPage';
 
     /**
      * @param {import('@playwright/test').Page} page
@@ -372,6 +377,48 @@ export default class DataProvider extends Fixture {
         return [
             { name: 'seQura' },
             { name: 'SVEA' }
+        ];
+    }
+
+    /**
+     * Banner configurations to assert per storefront location. `imageUrl` is the media
+     * path fragment asserted as a substring of the rendered <img src> (independent of
+     * the store's media base URL). Distinct images per location prove the right one loads.
+     *
+     * @returns {Array<{displayLocation: string, imageUrl: string, linkUrl: string}>}
+     */
+    bannerOptions() {
+        const dir = DataProvider.BANNER_MEDIA_DIR;
+        const linked = 'https://sequra.com';
+        const config = (displayLocation, image, linkUrl) => ({
+            displayLocation,
+            imageUrl: `${dir}/${image}`,
+            linkUrl
+        });
+
+        return [
+            config(DataProvider.BANNER_ON_HOME, 'banner-white-728x90.png', linked),
+            config(DataProvider.BANNER_ON_PRODUCT, 'banner-black-728x90.png', ''),
+            config(DataProvider.BANNER_ON_LISTING, 'banner-green-728x90.png', linked),
+            config(DataProvider.BANNER_ON_CART, 'banner-white-728x90.png', ''),
+        ];
+    }
+
+    /**
+     * Per-country home-page banner expectations, to assert that the banner shown is
+     * selected by the resolved country. `locale` is the store locale that resolves to
+     * that country; `banner` is null when the country has no configured banner.
+     * Mirrors the seed: FR → green, IT → black, PT → no banner.
+     *
+     * @returns {Array<{country: string, locale: string, banner: {imageUrl: string, linkUrl: string}|null}>}
+     */
+    bannerCountryOptions() {
+        const dir = DataProvider.BANNER_MEDIA_DIR;
+        const linked = 'https://sequra.com';
+        return [
+            { country: 'FR', locale: 'fr_FR', banner: { imageUrl: `${dir}/banner-green-728x90.png`, linkUrl: linked } },
+            { country: 'IT', locale: 'it_IT', banner: { imageUrl: `${dir}/banner-black-728x90.png`, linkUrl: '' } },
+            { country: 'PT', locale: 'pt_PT', banner: null },
         ];
     }
 }

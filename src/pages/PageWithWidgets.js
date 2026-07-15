@@ -1,18 +1,19 @@
-import Page from "./Page.js";
+import PageWithBanner from "./PageWithBanner.js";
 /** @typedef {import('../utils/types.js').FrontEndWidgetOptions} FrontEndWidgetOptions */
 
 /**
  * Base class for pages with widgets
  */
-export default class PageWithWidgets extends Page {
+export default class PageWithWidgets extends PageWithBanner {
 
     /**
     * Init the locators with the locators available
-    * 
+    *
     * @returns {Object}
     */
     initLocators() {
         return {
+            ...super.initLocators(),
             /**
             * Locator for the widget iframe based on the provided options or any widget if no options are provided
             * @param {FrontEndWidgetOptions|null} opt 
