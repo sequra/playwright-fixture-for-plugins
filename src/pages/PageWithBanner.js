@@ -41,10 +41,13 @@ export default class PageWithBanner extends Page {
     async expectBannerToBeVisible({ imageUrl, linkUrl = null }) {
         const { bannerImage, bannerLink } = this.locators;
         await this.expect(bannerImage()).toBeVisible();
-        await this.expect(bannerImage()).toHaveAttribute('src', imageUrl);
+        // Match a substring so the assertion is independent of the store's media base URL
+        const src = await bannerImage().getAttribute('src');
+        this.expect(src, `banner image src should contain "${imageUrl}"`).toContain(imageUrl);
 
         if (linkUrl) {
-            await this.expect(bannerLink()).toHaveAttribute('href', linkUrl);
+            const href = await bannerLink().getAttribute('href');
+            this.expect(href, `banner link href should contain "${linkUrl}"`).toContain(linkUrl);
             await this.expect(bannerLink()).toHaveAttribute('target', '_blank');
         } else {
             await this.expect(bannerLink()).toHaveCount(0);

@@ -11,6 +11,11 @@ export default class DataProvider extends Fixture {
     static SERVICE_USERNAME = 'dummy_services_automated_tests';
     static PRODUCT_WIDGET = 'product';
     static CART_WIDGET = 'cart';
+    static BANNER_MEDIA_DIR = 'sequra/banners';
+    static BANNER_ON_HOME = 'displayOnHomePage';
+    static BANNER_ON_PRODUCT = 'displayOnProductPage';
+    static BANNER_ON_CART = 'displayOnCartPage';
+    static BANNER_ON_LISTING = 'displayOnProductListingPage';
 
     /**
      * @param {import('@playwright/test').Page} page
@@ -372,6 +377,36 @@ export default class DataProvider extends Fixture {
         return [
             { name: 'seQura' },
             { name: 'SVEA' }
+        ];
+    }
+
+    /**
+     * Banner configurations to seed and assert per storefront location.
+     * `image` is the file the seed writes to the media dir; `imageUrl` is the media
+     * path fragment asserted as a substring of the rendered <img src> (independent of
+     * the store's media base URL). Distinct images per location prove the right one loads.
+     *
+     * @param {Object} options
+     * @param {string} options.country Country the banners target. Default 'ES'.
+     * @returns {Array<{displayLocation: string, country: string, image: string, imageUrl: string, linkUrl: string}>}
+     */
+    bannerOptions(options = {}) {
+        const { country = 'ES' } = options;
+        const dir = DataProvider.BANNER_MEDIA_DIR;
+        const linked = 'https://sequra.com';
+        const config = (displayLocation, image, linkUrl) => ({
+            displayLocation,
+            country,
+            image,
+            imageUrl: `${dir}/${image}`,
+            linkUrl
+        });
+
+        return [
+            config(DataProvider.BANNER_ON_HOME, 'banner-white-728x90.png', linked),
+            config(DataProvider.BANNER_ON_PRODUCT, 'banner-black-728x90.png', ''),
+            config(DataProvider.BANNER_ON_LISTING, 'banner-green-728x90.png', linked),
+            config(DataProvider.BANNER_ON_CART, 'banner-white-728x90.png', ''),
         ];
     }
 }
