@@ -406,18 +406,19 @@ export default class DataProvider extends Fixture {
 
     /**
      * Per-country home-page banner expectations, to assert that the banner shown is
-     * selected by the resolved country. Mirrors the seed: FR → green, IT → black,
-     * PT → no banner. `banner` is null when the country has no configured banner.
+     * selected by the resolved country. `locale` is the store locale that resolves to
+     * that country; `banner` is null when the country has no configured banner.
+     * Mirrors the seed: FR → green, IT → black, PT → no banner.
      *
-     * @returns {Array<{country: string, banner: {imageUrl: string, linkUrl: string}|null}>}
+     * @returns {Array<{country: string, locale: string, banner: {imageUrl: string, linkUrl: string}|null}>}
      */
     bannerCountryOptions() {
         const dir = DataProvider.BANNER_MEDIA_DIR;
         const linked = 'https://sequra.com';
         return [
-            { country: 'FR', banner: { imageUrl: `${dir}/banner-green-728x90.png`, linkUrl: linked } },
-            { country: 'IT', banner: { imageUrl: `${dir}/banner-black-728x90.png`, linkUrl: '' } },
-            { country: 'PT', banner: null },
+            { country: 'FR', locale: 'fr_FR', banner: { imageUrl: `${dir}/banner-green-728x90.png`, linkUrl: linked } },
+            { country: 'IT', locale: 'it_IT', banner: { imageUrl: `${dir}/banner-black-728x90.png`, linkUrl: '' } },
+            { country: 'PT', locale: 'pt_PT', banner: null },
         ];
     }
 }
