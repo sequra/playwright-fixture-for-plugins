@@ -403,4 +403,21 @@ export default class DataProvider extends Fixture {
             config(DataProvider.BANNER_ON_CART, 'banner-white-728x90.png', ''),
         ];
     }
+
+    /**
+     * Per-country home-page banner expectations, to assert that the banner shown is
+     * selected by the resolved country. Mirrors the seed: FR → green, IT → black,
+     * PT → no banner. `banner` is null when the country has no configured banner.
+     *
+     * @returns {Array<{country: string, banner: {imageUrl: string, linkUrl: string}|null}>}
+     */
+    bannerCountryOptions() {
+        const dir = DataProvider.BANNER_MEDIA_DIR;
+        const linked = 'https://sequra.com';
+        return [
+            { country: 'FR', banner: { imageUrl: `${dir}/banner-green-728x90.png`, linkUrl: linked } },
+            { country: 'IT', banner: { imageUrl: `${dir}/banner-black-728x90.png`, linkUrl: '' } },
+            { country: 'PT', banner: null },
+        ];
+    }
 }
