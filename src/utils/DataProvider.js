@@ -381,23 +381,17 @@ export default class DataProvider extends Fixture {
     }
 
     /**
-     * Banner configurations to seed and assert per storefront location.
-     * `image` is the file the seed writes to the media dir; `imageUrl` is the media
+     * Banner configurations to assert per storefront location. `imageUrl` is the media
      * path fragment asserted as a substring of the rendered <img src> (independent of
      * the store's media base URL). Distinct images per location prove the right one loads.
      *
-     * @param {Object} options
-     * @param {string} options.country Country the banners target. Default 'ES'.
-     * @returns {Array<{displayLocation: string, country: string, image: string, imageUrl: string, linkUrl: string}>}
+     * @returns {Array<{displayLocation: string, imageUrl: string, linkUrl: string}>}
      */
-    bannerOptions(options = {}) {
-        const { country = 'ES' } = options;
+    bannerOptions() {
         const dir = DataProvider.BANNER_MEDIA_DIR;
         const linked = 'https://sequra.com';
         const config = (displayLocation, image, linkUrl) => ({
             displayLocation,
-            country,
-            image,
             imageUrl: `${dir}/${image}`,
             linkUrl
         });
