@@ -160,6 +160,15 @@ classDiagram
         +goto()
     }
     
+    class PageWithBanner {
+        +expectBannerToBeVisible()
+        +expectBannerNotToBeVisible()
+    }
+    
+    class HomePage {
+        +homeUrl()
+    }
+    
     class PageWithWidgets {
         +expectWidgetToBeVisible()
         +expectWidgetNotToBeVisible()
@@ -175,6 +184,8 @@ classDiagram
         +shopper()
         +checkoutPaymentMethods()
         +widgetOptions()
+        +bannerOptions()
+        +bannerCountryOptions()
     }
     
     class SeQuraHelper {
@@ -186,7 +197,9 @@ classDiagram
     Fixture <|-- Page
     Fixture <|-- DataProvider
     Fixture <|-- SeQuraHelper
-    Page <|-- PageWithWidgets
+    Page <|-- PageWithBanner
+    PageWithBanner <|-- HomePage
+    PageWithBanner <|-- PageWithWidgets
     PageWithWidgets <|-- ProductPage
 ```
 
@@ -304,6 +317,8 @@ dataProvider.shopper('approve')         // Auto-approval scenario
 dataProvider.shopper('cancel')          // Auto-cancel scenario
 dataProvider.checkoutPaymentMethods()   // Available payment options
 dataProvider.widgetOptions()            // Widget configuration
+dataProvider.bannerOptions()            // Banner expectations per storefront location
+dataProvider.bannerCountryOptions()     // Per-country home banner expectations
 dataProvider.publicIP()                 // Current public IP
 ```
 
@@ -332,6 +347,8 @@ Specialized page interactions:
 - **ProductPage**: Product detail page operations
 - **CheckoutPage**: Checkout flow and payment processing
 - **CartPage**: Shopping cart functionality
+- **HomePage**: Home page navigation
+- **PageWithBanner**: Storefront banner assertions (base for `HomePage` and `PageWithWidgets`)
 - **PageWithWidgets**: Widget testing capabilities
 - **SettingsPage**: Admin configuration pages
 
@@ -954,6 +971,8 @@ Test data management:
 shopper(alias)                          // Get customer data by alias
 checkoutPaymentMethods(merchantRef)     // Get payment method configuration  
 widgetOptions()                         // Get default widget configuration
+bannerOptions()                         // Banner expectations per storefront location
+bannerCountryOptions()                  // Per-country home banner expectations (locale + banner)
 countriesMerchantRefs(username)         // Get merchant references by country
 publicIP()                              // Get current public IP address
 deploymentTargetsOptions()              // Get deployment target options
@@ -974,6 +993,13 @@ login(options)              // Override: Platform authentication
 logout(options)             // Override: Session cleanup
 gotoSeQuraSettings(options) // Override: Navigate to plugin settings  
 gotoOrderListing(options)   // Override: Navigate to orders page
+```
+
+#### PageWithBanner
+Storefront banner assertions (base for `HomePage` and `PageWithWidgets`):
+```javascript
+expectBannerToBeVisible(options)        // Assert banner image (and optional link) visibility
+expectBannerNotToBeVisible()            // Assert no banner is rendered
 ```
 
 #### PageWithWidgets
