@@ -39,7 +39,9 @@ export default class SeQuraCheckoutForm extends Fixture {
             addCardOption: iframe => iframe.locator('.payment-methods-selector:has([data-testid="add-card-logo"]) .payment-methods-selector-checkbox'),
             expressIframe: () => this.page.frameLocator('#sq-identification-tbs'),
             expressIframeLocator: () => this.page.locator('#sq-identification-tbs'),
-            paymentOption: (iframe, product) => iframe.locator(`[data-testid="payment-option-${product}"]`)
+            paymentOption: (iframe, product) => iframe.locator(`[data-testid="payment-option-${product}"]`),
+            cartSummaryPaymentOption: (iframe, product) => iframe.locator(`[data-testid^="express-payment-option-${product}-"]`),
+            cartSummaryContinueButton: iframe => iframe.locator('[data-testid="cart-summary-continue"]')
         };
     }
 
@@ -195,25 +197,40 @@ export default class SeQuraCheckoutForm extends Fixture {
     /**
      * Fill the Express Checkout identification form (product code `tbs`).
      *
-     * Express first shows a payment-method chooser and pre-fills the logged-in shopper's personal
-     * data, so only the fields the scenario supplies (e.g. nin) are filled; the rest keep their
-     * pre-filled account values. The chooser, personal-info and OTP steps all share the `tbs`
-     * iframe and reuse the same field/action selectors as the regular checkout.
+     * Express first shows either a payment-method chooser or the cart summary with its payment
+     * options, and pre-fills the logged-in shopper's personal data, so only the fields the scenario
+     * supplies (e.g. nin) are filled; the rest keep their pre-filled account values. The chooser or
+     * cart summary, personal-info and OTP steps all share the `tbs` iframe.
      *
-     * @param {string} product seQura product to pick in the chooser (i1, sp1, pp3)
+     * @param {string} product seQura product to pick in the chooser or cart summary (i1, sp1, pp3)
      * @param {Object} options Data to fill — only provided personal-info fields are set
      * @param {string} [options.nin] National identification number
      * @param {string[]} options.otp Digits of the OTP
      * @returns {Promise<void>}
      */
     async fillExpressCheckoutForm(product, options) {
-        const { expressIframeLocator, expressIframe, paymentOption, acceptPrivacyPolicy, iframeBtn } = this.locators;
+        const {
+            expressIframeLocator,
+            expressIframe,
+            paymentOption,
+            cartSummaryPaymentOption,
+            cartSummaryContinueButton,
+            acceptPrivacyPolicy,
+            iframeBtn
+        } = this.locators;
         await expressIframeLocator().waitFor({ state: 'attached', timeout: 20000 });
         const iframe = expressIframe();
 
-        // Payment-method chooser.
-        await paymentOption(iframe, product).click();
-        await iframeBtn(iframe).click();
+        const chooserOption = paymentOption(iframe, product);
+        const cartSummaryOption = cartSummaryPaymentOption(iframe, product).first();
+        await chooserOption.or(cartSummaryOption).first().waitFor({ state: 'visible', timeout: 20000 });
+        if (await cartSummaryOption.isVisible()) {
+            await cartSummaryOption.click();
+            await cartSummaryContinueButton(iframe).click();
+        } else {
+            await chooserOption.click();
+            await iframeBtn(iframe).click();
+        }
 
         // Personal data (name/date of birth/phone are pre-filled from the account).
         await this.fillPersonalInfo(iframe, options);
